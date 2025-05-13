@@ -6,8 +6,7 @@
 
     .login-card{
         width: 450px;
-        background: #6b0000;
-        background: linear-gradient(0deg,rgba(107, 0, 0, 1) 0%, rgba(220, 20, 60, 1) 100%);
+        background: rgba(220, 20, 60, 1);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -96,8 +95,8 @@
                 cursor: pointer;
                 border-radius: 5px;
                 &:hover{
-                background-color: #ef4c6d;
-                transition: all ease-in-out 0.2s;
+                  background-color: #ef4c6d;
+                  transition: all ease-in-out 0.2s;
 
                 }
             }

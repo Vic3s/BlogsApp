@@ -166,7 +166,7 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
     .then(result => {return result})
     .catch(err => console.log(err));
 
-    if(!bcrypt.compare(password, user.password)){
+    if(!await bcrypt.compare(password, user.password)){
         return res.status(403).json({error: '* Invalid Credentials! *'});
     }
 
@@ -184,7 +184,14 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
 
 app.get("/api/account/data", JsonMiddleware, CookieAuth, (req, res) => {
     if (req.user) {
-        return res.send({ user: req.user });
+        let userObject = {
+            id: req.user.id, 
+            name: req.user.name, 
+            email: req.user.email, 
+            pfp_pic: req.user.profilePic
+        };
+
+        return res.send({ user: userObject});
     } else {
         return res.status(401).send({ message: '* Not authenticated! *' });
     }

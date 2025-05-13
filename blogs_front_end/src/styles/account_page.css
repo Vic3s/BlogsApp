@@ -1,0 +1,52 @@
+.main-container-accoutn {
+  width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 70px;
+}
+.main-container-accoutn .account-title {
+  font-family: "City Mango", sans-serif;
+  color: crimson;
+  text-align: center;
+  font-size: 70px;
+}
+.main-container-accoutn .account-info-container {
+  display: flex;
+  flex-direction: row;
+}
+.main-container-accoutn .account-info-container img {
+  width: 300px;
+  height: 300px;
+}
+.main-container-accoutn .account-info-container .account-text {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.main-container-accoutn .account-info-container .account-text h2 {
+  width: 208px;
+}
+.main-container-accoutn .account-info-container .account-text form {
+  width: 200px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+}
+.main-container-accoutn .account-info-container .account-text form .logout {
+  margin-top: 20px;
+  background: crimson;
+  color: white;
+  padding: 6px;
+  border: 0;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.main-container-accoutn .account-info-container .account-text form .logout:hover {
+  background-color: #ef4c6d;
+  transition: all ease-in-out 0.2s;
+}
+
+/*# sourceMappingURL=account_page.css.map */

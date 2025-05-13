@@ -6,8 +6,7 @@
 }
 .main-container-login .login-card {
   width: 450px;
-  background: #6b0000;
-  background: linear-gradient(0deg, rgb(107, 0, 0) 0%, rgb(220, 20, 60) 100%);
+  background: rgb(220, 20, 60);
   display: flex;
   align-items: center;
   justify-content: center;
