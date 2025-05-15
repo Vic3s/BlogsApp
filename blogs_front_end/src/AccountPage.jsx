@@ -6,7 +6,7 @@ import "./styles/account_page.css"
 function Account(){
 
     const[acc, setAcc] = useState({user: null})
-
+    const[isActive, setIsActive] = useState(false);
     const navigate = useNavigate();
 
     useEffect(()=> {
@@ -48,6 +48,11 @@ function Account(){
         }
     }
 
+    function postProfilePicture(e){
+
+    }
+    
+
     return  <div className="main-container-accoutn">
                 <Nav/>
 
@@ -56,16 +61,26 @@ function Account(){
                 <div className="account-info-container">
                     {renderImage()}
                     <div className="account-text">
-                        <h2>{acc.name}</h2>
-                        <h2>{acc.email}</h2>
-                        <form onSubmit={logOut}>
+                        <div>
+                            <h2>{acc.name}</h2>
+                            <h2>{acc.email}</h2>
+                        </div>
+                        <button className="form-visibility-button" onClick={() => setIsActive(!isActive)}>Change picture</button>
+                        <div className={`change-picture-form ${isActive ? 'change-picture-form-active' : ''} `}>
+                            <form onsubmit={postProfilePicture}>
+                                <label htmlFor="profile-pic"><img src="../public/upload-file-svgrepo-com.svg" alt="upload-icon" /></label>
+                                <input type="file" name="profile-pic" id="profile-pic"/>
+                            <button type="submit">Change Picture</button>
+                        </form>
+                        <button className="closeBtn" onClick={() => setIsActive(!isActive)}>Close</button>
+                        </div>
+                        <form onSubmit={logOut} className="logout-form">
                             <button type="submit" className="logout">Log Out</button>
                         </form>
                     </div>
                     
                 </div>
                 
-
         </div>
 }
 

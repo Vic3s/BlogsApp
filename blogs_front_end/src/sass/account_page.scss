@@ -1,3 +1,24 @@
+@mixin button-basic(){
+    margin-top: 20px;
+    background: crimson;
+    color: white;
+    padding: 6px;
+    border: 0;
+    font-size: 1.2em;
+    cursor: pointer;
+    border-radius: 5px;
+    &:hover{
+        background-color: #ef4c6d;
+        transition: all ease-in-out 0.2s;
+
+    }
+}
+
+button{
+    @include button-basic();
+}
+
+
 .main-container-accoutn{
     width: 1100px;
     display: flex;
@@ -19,6 +40,7 @@
             width: 300px;
             height: 300px;
         }
+        
 
         .account-text{
             width: 300px;
@@ -26,32 +48,66 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 20px;
 
             h2{
                 width: 208px;
             }
 
-            form{
+            .logout-form{
                 width: 200px;
                 height: 100px;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
 
-                .logout{
-                    margin-top: 20px;
-                    background: crimson;
-                    color: white;
-                    padding: 6px;
-                    border: 0;
-                    font-size: 1.2em;
-                    cursor: pointer;
-                    border-radius: 5px;
-                    &:hover{
-                        background-color: #ef4c6d;
-                        transition: all ease-in-out 0.2s;
+                // .logout{
+                //     @include button-basic();
+                // }
+            }
+            .change-picture-form{
+                background-color: white;
+                height: 300px;
+                width: 300px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                transition: 200ms ease-in-out;
+                z-index: 100;
+                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
+                form{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+
+                    input{
+                        visibility: hidden;
+                        width: 0px;
+                        height: 0px;
                     }
+
+                    label{
+                        img{
+                            height: 170px;
+                            width: 170px;
+                        }
+                    }
+                    
                 }
+                // button{
+                //    @include button-basic();
+                // }
+            }
+            .change-picture-form-active{
+                transition: 200ms ease-in-out;
+                transform: translate(-50%, -50%) scale(1);
             }
         }
     }
