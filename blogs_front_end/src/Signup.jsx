@@ -28,7 +28,7 @@ function Signup() {
             return response.json();
         }).then(data => {
             console.log('Response: ', data);
-            navigate("/");
+            navigate("/login");
         })
         .catch((err) => console.log(err));
     }

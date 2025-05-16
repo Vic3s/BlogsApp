@@ -53,7 +53,7 @@ function Account(){
 
     const renderImage = () => {
         if(acc.pfp_pic){
-            return <img src={acc.pfp} alt="account-picture" className="profile_pic"/>
+            return <img src={acc.pfp_pic} alt="account-picture" className="profile_pic"/>
         }else{
             return <img src="../public/unknown_user.jpg" alt="account-picture" className="profile_pic"/>
         }
@@ -84,7 +84,9 @@ function Account(){
                 <h1 className="account-title">Account</h1>
 
                 <div className="account-info-container">
-                    {renderImage()}
+                    <div className="image-container">
+                        {renderImage()}
+                    </div>
                     <div className="account-text">
                         <div className="text">
                             <h2>{acc.name}</h2>

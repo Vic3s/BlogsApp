@@ -17,7 +17,7 @@ const accountsSchema = new Schema({
         require: true
     },
     profilePic: {
-        type: Buffer,
+        data: Buffer,
         contentType: String
     }
 

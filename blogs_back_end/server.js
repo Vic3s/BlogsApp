@@ -163,7 +163,10 @@ app.get("/api/blogs/:id", JsonMiddleware, async (req, res) => {
 
 app.post("/api/signup/data", JsonMiddleware, async (req, res) => {
     const hashed_pass = await bcrypt.hash(req.body.password, 10);
-    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: Buffer.alloc(0)});
+    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: {
+        data: null,
+        contentType: "image/png"
+    }});
 
     new_account.save()
     .then(result => {
@@ -181,11 +184,17 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
     .then(result => {return result})
     .catch(err => console.log(err));
 
+    const userObj = {
+        _id: user._id,
+        name: user.name,
+        email: user.email
+    }
+
     if(!await bcrypt.compare(password, user.password)){
         return res.status(403).json({error: '* Invalid Credentials! *'});
     }
 
-    const token = jwt.sign(user.toObject(), process.env.SECRET, {expiresIn: "30m"})
+    const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "30m"})
 
     res.cookie("token", token, {
         httpOnly: true
@@ -197,13 +206,26 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
 
 //RETURN USER IF AUTHENTICATED AND STORED IN COOKIES
 
-app.get("/api/account/data", JsonMiddleware, CookieAuth, (req, res) => {
+app.get("/api/account/data", JsonMiddleware, CookieAuth, async (req, res) => {
     if (req.user) {
+
+        const getPicture = await Account.findById(req.user._id)
+        .then(result => { return result })
+        .catch(err => console.log(err))
+
+        let base64 = null;        
+        console.log(getPicture)
+
+        if(getPicture.profilePic.data !== null){
+            const buffer = Buffer.from(getPicture.profilePic.data);
+            base64 = buffer.toString('base64');
+        }
+
         let userObject = {
             id: req.user._id, 
-            name: req.user.name, 
+            name: req.user.name,
             email: req.user.email, 
-            pfp_pic: req.user.profilePic
+            pfp_pic: getPicture.profilePic.data ? `data:${getPicture.profilePic.contentType};base64,${base64}` : null,
         };
 
         return res.send({ user: userObject});
@@ -216,7 +238,7 @@ app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, (req
 
     Account.findByIdAndUpdate(req.body.author_id, {
         profilePic: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+            data: fs.readFileSync(path.join(__dirname + '/prof_pics/' + req.file.filename)),
             contentType: 'image/png'
         }
     }, {new: true})
