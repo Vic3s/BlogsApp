@@ -8,6 +8,12 @@ function Account(){
     const[acc, setAcc] = useState({user: null})
     const[isActive, setIsActive] = useState(false);
     const navigate = useNavigate();
+    const[image, setImage] = useState(null);
+    const dataObjMultipart = new FormData();
+
+    function handleImage(e) {
+        setImage(e.target.files[0])
+    }
 
     useEffect(()=> {
         const getAcc = async () => {
@@ -20,12 +26,17 @@ function Account(){
             })
             .then(response => response.json())
             .then(accObj => {
-                console.log(accObj.user)
                 setAcc(accObj.user)})
             .catch(err => console.log(err));
         }
         getAcc();
     }, [])
+
+    useEffect(() => {
+        if (image) {
+            dataObjMultipart.append('image', image);
+        }
+    }, [image]);
 
     const logOut = async (e) => {
         e.preventDefault();
@@ -40,7 +51,7 @@ function Account(){
         navigate("/");
     }
 
-    function renderImage(){
+    const renderImage = () => {
         if(acc.pfp_pic){
             return <img src={acc.pfp} alt="account-picture" className="profile_pic"/>
         }else{
@@ -48,11 +59,25 @@ function Account(){
         }
     }
 
-    function postProfilePicture(e){
+    const postProfilePicture = (e) => {
+        e.preventDefault();
 
+        dataObjMultipart.append("author_id", acc.id);
+        
+        fetch("http://localhost:5000/api/account/image", {
+            method: "POST",
+            credentials: 'include',
+            body: dataObjMultipart
+        }).then(response => {
+            if(!response.ok){
+                throw new Error("*Failed...*")
+            }
+            return response.json();
+        }).then(data => {
+            console.log(data)
+        }).catch(err => console.log(err))
     }
     
-
     return  <div className="main-container-accoutn">
                 <Nav/>
 
@@ -61,24 +86,25 @@ function Account(){
                 <div className="account-info-container">
                     {renderImage()}
                     <div className="account-text">
-                        <div>
+                        <div className="text">
                             <h2>{acc.name}</h2>
                             <h2>{acc.email}</h2>
                         </div>
-                        <button className="form-visibility-button" onClick={() => setIsActive(!isActive)}>Change picture</button>
-                        <div className={`change-picture-form ${isActive ? 'change-picture-form-active' : ''} `}>
-                            <form onsubmit={postProfilePicture}>
-                                <label htmlFor="profile-pic"><img src="../public/upload-file-svgrepo-com.svg" alt="upload-icon" /></label>
-                                <input type="file" name="profile-pic" id="profile-pic"/>
-                            <button type="submit">Change Picture</button>
-                        </form>
-                        <button className="closeBtn" onClick={() => setIsActive(!isActive)}>Close</button>
+                        <div className="buttons">
+                            <button className="form-visibility-button" onClick={() => setIsActive(!isActive)}>Change picture</button>
+                            <div className={`change-picture-form ${isActive ? 'change-picture-form-active' : ''} `}>
+                                <form onSubmit={postProfilePicture}>
+                                    <label htmlFor="profile-pic"><img src="../public/upload-file-svgrepo-com.svg" alt="upload-icon" /></label>
+                                    <input type="file" name="profile-pic" id="profile-pic" onChange={handleImage}/>
+                                <button type="submit">Change Picture</button>
+                                </form>
+                                <button className="closeBtn" onClick={(e) => setIsActive(!isActive)}>Close</button>
+                            </div>
+                            <form onSubmit={logOut} className="logout-form">
+                                <button type="submit" className="logout">Log Out</button>
+                            </form>
                         </div>
-                        <form onSubmit={logOut} className="logout-form">
-                            <button type="submit" className="logout">Log Out</button>
-                        </form>
                     </div>
-                    
                 </div>
                 
         </div>

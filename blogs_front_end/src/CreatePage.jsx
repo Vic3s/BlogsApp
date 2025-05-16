@@ -39,6 +39,7 @@ function Create(){
             if(!response.ok){
                 throw new Error("*Failed to post blog!*")
             }
+            console.log(response)
             return response.json();
         }).then(data => {
             console.log('Response: ', data)
@@ -65,7 +66,7 @@ function Create(){
                     <textarea type="text" id="body" name="body" onChange={(e) => setBody(e.target.value)} required></textarea>
                 </div>
                 <div className="inputMainImage">
-                    <lable htmlFor="main-image">Pick an image</lable>
+                    <label htmlFor="main-image">Pick an image</label>
                     <input type="file" name="main-image" id="main-image" onChange={HandleFile} />
                 </div>
                 <button>Submit</button>

@@ -32,7 +32,7 @@ app.use(cookieParser());
 const JsonMiddleware = express.json();
 
 
-// MULTER SETUP 
+// MULTER SETUP FOR BLOGS
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -44,6 +44,19 @@ let storage = multer.diskStorage({
 })
 
 let upload = multer({storage: storage});
+
+// MULTER SETUP FOR PROFILE PICTURES
+
+let storage_profPics = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '/prof_pics/'));
+    }, 
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+})
+
+let upload_profPics = multer({storage: storage_profPics});
 
 // BLOGS ROUTES
 
@@ -93,6 +106,8 @@ app.get("/api/blog/image/:id", JsonMiddleware, async (req, res) => {
 // CREATE A BLOG POST FUNCTION
 
 app.post("/api/blogs/create", upload.single("image"), CookieAuth, (req, res) => {
+
+    console.log(req.body)
 
     const newBlogObj = {
         title: req.body.title, 
@@ -148,7 +163,7 @@ app.get("/api/blogs/:id", JsonMiddleware, async (req, res) => {
 
 app.post("/api/signup/data", JsonMiddleware, async (req, res) => {
     const hashed_pass = await bcrypt.hash(req.body.password, 10);
-    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass});
+    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: Buffer.alloc(0)});
 
     new_account.save()
     .then(result => {
@@ -185,7 +200,7 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
 app.get("/api/account/data", JsonMiddleware, CookieAuth, (req, res) => {
     if (req.user) {
         let userObject = {
-            id: req.user.id, 
+            id: req.user._id, 
             name: req.user.name, 
             email: req.user.email, 
             pfp_pic: req.user.profilePic
@@ -195,7 +210,23 @@ app.get("/api/account/data", JsonMiddleware, CookieAuth, (req, res) => {
     } else {
         return res.status(401).send({ message: '* Not authenticated! *' });
     }
-})
+});
+
+app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, (req, res) => {
+
+    Account.findByIdAndUpdate(req.body.author_id, {
+        profilePic: {
+            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+            contentType: 'image/png'
+        }
+    }, {new: true})
+    .then(response => console.log(response))
+    .catch(err => console.log({"Error": err}));
+    
+    res.send({"Response": "Posted"})
+
+});
+
 
 //DATABASE CONNECTION FUNC
 
