@@ -53,23 +53,28 @@ function Create(){
     
         <div className="create-blog">
             <form onSubmit={handleSubmit}>
-                <div className="inputTitle">
-                    <label htmlFor="title">Blog title:</label>
+                <div className="input-title">
+                    <label htmlFor="title">Title</label>
                     <input type="text" id="title" name="title" onChange={(e) => setTitle(e.target.value)} required/>
                 </div>
-                <div className="inputSnippit">
-                    <label htmlFor="snippet">Blog snippet:</label>
+                <div className="input-snippit">
+                    <label htmlFor="snippet">Snippet</label>
                     <input type="text" id="snippet" name="snippet" onChange={(e) => setSnippet(e.target.value)} required/>
                 </div>
-                <div className="inputBody">
-                    <label htmlFor="body">Blog body:</label>
+                <div className="input-body">
+                    <label htmlFor="body">Contents</label>
                     <textarea type="text" id="body" name="body" onChange={(e) => setBody(e.target.value)} required></textarea>
                 </div>
-                <div className="inputMainImage">
-                    <label htmlFor="main-image">Pick an image</label>
+                <div className="input-main-image">
+                    <label htmlFor="main-image">
+                        <img src="../public/image-upload-solid.svg" alt="upload image icon" />
+                        <h2>Choose a thumbnail image</h2>
+                    </label>
                     <input type="file" name="main-image" id="main-image" onChange={HandleFile} />
                 </div>
-                <button>Submit</button>
+                <div className="submit-btn-container">
+                    <button>Upload Blog</button>
+                </div>
             </form>
 
         </div>

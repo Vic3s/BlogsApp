@@ -1,65 +1,69 @@
 .create-blog form {
-  max-width: 400px;
+  width: 1250px;
   margin: 0 auto;
 }
-.create-blog input, .create-blog textarea {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
+.create-blog form .input-title input {
   padding: 8px;
+  width: 100%;
+  border: none;
+  border-bottom: solid gray 0.5px;
+  outline: none;
 }
-.create-blog label {
-  display: block;
-  margin-top: 24px;
+.create-blog form .input-snippit input {
+  padding: 8px;
+  width: 100%;
+  border: none;
+  border-bottom: solid gray 0.5px;
+  outline: none;
 }
-.create-blog button {
-  margin-top: 20px;
+.create-blog form .input-body label {
+  margin-top: 50px;
+}
+.create-blog form .input-body textarea {
+  width: 100%;
+  height: 300px;
+  padding: 8px;
+  outline: none;
+}
+.create-blog form .input-main-image {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.create-blog form .input-main-image input {
+  visibility: hidden;
+}
+.create-blog form .input-main-image label {
+  width: 400px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  border: 2px solid crimson;
+  border-radius: 15px;
+}
+.create-blog form .input-main-image label img {
+  width: 100px;
+  height: 100px;
+}
+.create-blog form .input-main-image label h2 {
+  font-size: 27px;
+}
+.create-blog form .submit-btn-container button {
   background: crimson;
   color: white;
   padding: 6px;
-  border: 0;
   font-size: 1.2em;
   cursor: pointer;
+  margin-top: 10px;
 }
-
-textarea {
-  height: 120px;
-}
-
-.title:hover {
-  color: red;
-}
-
-.snippet:hover {
-  color: red;
-}
-
-.details {
-  position: relative;
-}
-
-.author {
-  margin-top: 40px;
-}
-
-.delete {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 50%;
-  padding: 8px;
-}
-.delete :hover {
-  cursor: pointer;
-  box-shadow: 1px 2px 3px rgb(0, 0, 0);
-}
-
-.heading1 {
-  padding-bottom: 20px;
-}
-
-.line {
-  margin: 20px 20px 20px 8px;
+.create-blog label {
+  font-size: 30px;
+  color: crimson;
+  display: block;
+  margin-top: 25px;
 }
 
 /*# sourceMappingURL=create_page.css.map */

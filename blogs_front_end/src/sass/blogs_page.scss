@@ -22,6 +22,7 @@ p, h1, h2, h3, a, ul{
     .heading-text{
 
       .heading1{
+        padding-bottom: 20px;
         width: 100%;
         font-family: 'City Mango', sans-serif;
         font-size: 70px;
@@ -75,12 +76,20 @@ p, h1, h2, h3, a, ul{
   
         .snippit{
           margin-bottom: 20px;
-          color: rgb(127, 127, 127)
+          color: rgb(127, 127, 127);
+
+          & :hover{
+            color: crimson;
+          }
         }
       
         .title{
           margin-top: 10px;
           margin-bottom: 10px;
+
+          & :hover{
+            color: crimson;
+          }
         }
         
         .addings{

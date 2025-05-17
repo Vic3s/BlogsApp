@@ -19,6 +19,7 @@ p, h1, h2, h3, a, ul {
   margin-bottom: 130px;
 }
 .blogs-page .heading-content .heading-text .heading1 {
+  padding-bottom: 20px;
   width: 100%;
   font-family: "City Mango", sans-serif;
   font-size: 70px;
@@ -65,9 +66,15 @@ p, h1, h2, h3, a, ul {
   margin-bottom: 20px;
   color: rgb(127, 127, 127);
 }
+.blogs-page .blogs-body .blog-content .single-blog .snippit :hover {
+  color: crimson;
+}
 .blogs-page .blogs-body .blog-content .single-blog .title {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+.blogs-page .blogs-body .blog-content .single-blog .title :hover {
+  color: crimson;
 }
 .blogs-page .blogs-body .blog-content .single-blog .addings {
   margin-bottom: 20px;
