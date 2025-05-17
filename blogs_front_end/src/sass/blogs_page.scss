@@ -49,12 +49,13 @@ p, h1, h2, h3, a, ul{
     width: 1044px;
 
     .blog-content{
+      width: 1044px;
       
       .single-blog{
         display: flex;
         flex-direction: row; 
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         gap: 60px;
 
         .image-blog{

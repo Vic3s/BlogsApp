@@ -89,26 +89,25 @@ function Account(){
                     </div>
                     <div className="account-text">
                         <div className="text">
-                            <h2>{acc.name}</h2>
-                            <h2>{acc.email}</h2>
+                            <h2 className="user-name">{acc.name}</h2>
+                            <h2 className="user-email">{acc.email}</h2>
                         </div>
                         <div className="buttons">
-                            <button className="form-visibility-button" onClick={() => setIsActive(!isActive)}>Change picture</button>
+                            <form onSubmit={logOut} className="logout-form">
+                                <button type="submit" className="logout">Log Out</button>
+                            </form>
+                            <button className="form-visibility-button" onClick={() => setIsActive(!isActive)}>Change Profile Pic</button>
                             <div className={`change-picture-form ${isActive ? 'change-picture-form-active' : ''} `}>
                                 <form onSubmit={postProfilePicture}>
                                     <label htmlFor="profile-pic"><img src="../public/upload-file-svgrepo-com.svg" alt="upload-icon" /></label>
                                     <input type="file" name="profile-pic" id="profile-pic" onChange={handleImage}/>
-                                <button type="submit">Change Picture</button>
+                                <button type="submit">Choose Image</button>
                                 </form>
                                 <button className="closeBtn" onClick={(e) => setIsActive(!isActive)}>Close</button>
                             </div>
-                            <form onSubmit={logOut} className="logout-form">
-                                <button type="submit" className="logout">Log Out</button>
-                            </form>
                         </div>
                     </div>
                 </div>
-                
         </div>
 }
 

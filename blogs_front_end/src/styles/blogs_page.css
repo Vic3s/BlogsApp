@@ -38,11 +38,14 @@ p, h1, h2, h3, a, ul {
 .blogs-page .blogs-body {
   width: 1044px;
 }
+.blogs-page .blogs-body .blog-content {
+  width: 1044px;
+}
 .blogs-page .blogs-body .blog-content .single-blog {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 60px;
 }
 .blogs-page .blogs-body .blog-content .single-blog .image-blog {

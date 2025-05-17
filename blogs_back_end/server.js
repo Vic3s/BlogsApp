@@ -214,7 +214,6 @@ app.get("/api/account/data", JsonMiddleware, CookieAuth, async (req, res) => {
         .catch(err => console.log(err))
 
         let base64 = null;        
-        console.log(getPicture)
 
         if(getPicture.profilePic.data !== null){
             const buffer = Buffer.from(getPicture.profilePic.data);
