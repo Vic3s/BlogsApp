@@ -1,22 +1,80 @@
 .blog-container-details {
   width: 60vw;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
-.blog-container-details .blog-title-container {
-  height: 120px;
+.blog-container-details .main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.blog-container-details .blog-title-container .title-blog {
+.blog-container-details .main-info .title-container .title {
   font-size: 40px;
+  font-weight: bolder;
 }
-.blog-container-details .blog-content-container {
+.blog-container-details .main-info .snippet-container .snippet {
+  font-size: 25px;
+  color: gray;
+}
+.blog-container-details .main-info .blog-popularity-data {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+  border-bottom: 1px solid rgb(187, 187, 187);
+}
+.blog-container-details .main-info .blog-popularity-data .author-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.blog-container-details .main-info .blog-popularity-data .author-container .author-name {
+  font-size: 25px;
+  font-weight: bold;
+}
+.blog-container-details .main-info .blog-popularity-data .author-container img {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+.blog-container-details .main-info .blog-popularity-data .popularity-data {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+.blog-container-details .main-info .blog-popularity-data .popularity-data .date {
+  color: rgb(163, 163, 163);
+  font-size: 20px;
+}
+.blog-container-details .main-info .blog-popularity-data .popularity-data .likes {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+.blog-container-details .main-info .blog-popularity-data .popularity-data .likes img {
+  width: 20px;
+  height: 20px;
+}
+.blog-container-details .main-info .blog-popularity-data .popularity-data .likes img:hover {
+  cursor: pointer;
+}
+.blog-container-details .main-info .image-container {
+  display: flex;
+  justify-content: center;
+}
+.blog-container-details .main-info .image-container img {
+  width: 60%;
+}
+.blog-container-details .content-container {
   margin-bottom: 40px;
 }
-.blog-container-details .blog-content-container .content {
+.blog-container-details .content-container .content {
+  font-size: 25px;
   margin-left: 0px;
-}
-.blog-container-details .author span {
-  color: crimson;
 }
 
 /*# sourceMappingURL=details_page.css.map */

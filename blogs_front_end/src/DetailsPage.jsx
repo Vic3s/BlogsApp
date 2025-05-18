@@ -9,7 +9,6 @@ function DetailsPage (){
     const { id } = useParams();
 
     const [blog, setBlog] = useState({blog: null});
-    const [author, setAuthor] = useState("")
 
     useEffect(() => {
         const get_blog_id_data = async () => {
@@ -21,8 +20,7 @@ function DetailsPage (){
                 credentials: 'include',
             }).then(response => response.json())
             .then(data => {
-                setBlog(data.blog)
-                setAuthor(data.authorName)
+                setBlog(data)
             })
             .catch(err => console.log(err));
         }
@@ -34,19 +32,40 @@ function DetailsPage (){
         <div className="blog-container-details">
             <Nav/>
 
-            <div className="blog-title-container">
-                <h2 className="title-blog">{blog.title}</h2>
+            <div className="main-info">
+                <div className="title-container">
+                    <h2 className="title">{blog.blog_title}</h2>
+                </div>
+
+                <div className="snippet-container">
+                    <h3 className="snippet">{blog.blog_snippet}</h3>
+                </div>
+
+                <div className="blog-popularity-data">
+                    <div className="author-container">
+                        <img src={blog.blog_author_profilepic} alt="author profile picture" />
+                        <p className="author-name">{blog.blog_author_name}</p>
+                    </div>
+                    <div className="popularity-data">
+                        <p className='date'>{String (blog.blog_date).substring(0, 10)}</p>
+                        <div className='likes'>
+                            <img src="../public/like-hand-symbol-of-rounded-shape-variant-svgrepo-com.svg" alt="like symbol"/>
+                            <p>{blog.likes}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="image-container">
+                    <img src={blog.blog_image} alt="iamge of blog"/>
+                </div>
             </div>
-            <div className="blog-content-container">
-                <h3 className="content">{blog.body}</h3>
-            </div>
-            <div className="blog-author">
-                <p className="author"><span>By:</span> {author}</p>
+            
+            <div className="content-container">
+                <p className="content">{blog.blog_body}</p>
             </div>
 
         </div>
         
-
     </>
 }
 

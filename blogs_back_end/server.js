@@ -93,15 +93,15 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
 
 })
 
-app.get("/api/blog/image/:id", JsonMiddleware, async (req, res) => {
+// app.get("/api/blog/image/:id", JsonMiddleware, async (req, res) => {
 
-    Blogs.find({_id: req.params.id})
-    .then(async (result) => {
-        res.send({imageObj: result.image})
-    })
-    .catch(err => console.log(err))
+//     Blogs.find({_id: req.params.id})
+//     .then(async (result) => {
+//         res.send({imageObj: result.image})
+//     })
+//     .catch(err => console.log(err))
 
-})
+// })
 
 // CREATE A BLOG POST FUNCTION
 
@@ -145,17 +145,32 @@ app.get("/api/blogs/:id", JsonMiddleware, async (req, res) => {
 
     const id = req.params.id;
     
-    await Blogs.findOne({_id: id})
-    .then(async (result) => {
-        console.log(result.author)
-        const authorObj = await Account.findOne({_id: result.author})
-        .then(result => {return result})
-        .catch(err => console.log(err))
-
-        res.send({blog: result, authorName: authorObj.name })
-    })
+    const blog = await Blogs.findOne({_id: id})
+    .then(async result => {return result})
     .catch((err) => { res.status(404).json({error: "* Blog Doesnt exist! *"})});
 
+    const author = await Account.findOne({_id: blog.author})
+    .then(result => {return result})
+    .catch(err => console.log(err))
+    
+    const authorBuffer = Buffer.from(author.profilePic.data);
+    const authorBase64 = authorBuffer.toString('base64');
+
+    const buffer = Buffer.from(blog.image.data); 
+    const base64 = buffer.toString('base64');
+
+    let blogObj = {
+        blog_id: blog._id,
+        blog_title: blog.title,
+        blog_snippet: blog.snippet,
+        blog_body: blog.body,
+        blog_author_name: author.name,
+        blog_author_profilepic: `data:${author.profilePic.contentType};base64,${authorBase64}`,
+        blog_image: `data:${blog.image.contentType};base64,${base64}`,
+        blog_likes: blog.likes,
+        blog_date: blog.createdAt
+    }
+    res.send(blogObj)
 
 })
 
