@@ -66,11 +66,16 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
     .then(async (response) => {
         let blogsObj = await Promise.all(response.map(async (item) => {
         let authorName = "Unknown(Error)"
+        let likedByCurrUser = false;
         try{
             const author_ = await Account.findOne({_id: item.author})
-            if(author_){
+
+            if(author_){    
                 authorName = author_.name;
             }
+            const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: author_._id})
+
+            likedByCurrUser = likedByCurrUser_ !== null ? true : false;
         }catch(err){
             console.log("Error with fetching the author: ", err)
         }
@@ -86,6 +91,7 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
             author: authorName, 
             image: `data:${item.image.contentType};base64,${base64}`,
             likes: item.likes,
+            likedByCurrUser: likedByCurrUser,
             createdAt: item.createdAt
         }
     }))
@@ -94,20 +100,49 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
 
 })
 
-app.post("/api/:id/like/", async (req, res) => {
+app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
 
-    const blogObj = await Blogs.findById(req.params.id)
-    .then(result => {return result})
-    .catch(err => console.log(err));
+    if(req.user){
 
-    console.log(blogObj.likes)
+        const hasUserLiked = await UserLikedBlogs.findOne({blog_id: req.params.id})
+        .then(result => {return result})
+        .catch(err => console.log(err));
 
-    res.send({"message": "Like Count Updated"})
-    // get current like count from id using req.params.id to find blog in fb
+        if(hasUserLiked !== null){
+            const blog_likes = await Blogs.findById(req.params.id)
+            .then(result => {return result.likes})
+            .catch(err => console.log(err));
 
-    //update it using findByIdAndUpdate()
+            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_likes - 1})
+            .then(result => {})
+            .catch(err => console.log(err));
 
-} )
+            await UserLikedBlogs.deleteOne({blog_id: req.params.id})
+            .then(result => {})
+            .catch(err => console.log(err));
+
+        }else{
+            const blog_likes = await Blogs.findById(req.params.id)
+            .then(result => {return result.likes})
+            .catch(err => console.log(err));
+
+            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_likes + 1})
+            .then(result => {})
+            .catch(err => console.log(err));
+
+            const likedBlog = new UserLikedBlogs({blog_id: req.params.id, user_id: req.user._id})
+
+            likedBlog.save()
+            .then(result => {})
+            .catch(err => console.log(err))
+        }
+
+        res.send({"message": "Like Count Updated"})
+
+    }else{
+        res.send({"message": "Not Logged In"});
+    }
+});
 
 // app.get("/api/blog/image/:id", JsonMiddleware, async (req, res) => {
 
@@ -149,14 +184,7 @@ app.post("/api/blogs/create", upload.single("image"), CookieAuth, (req, res) => 
     })
 })
 
-app.post("/api/logout", JsonMiddleware, (req, res) => {
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        path: '/', })
-    res.send({message: "Cookie Deleted, User loged out"})
-})
+//GET BLOG DETAILES VIEW PAGE
 
 app.get("/api/blogs/:id", JsonMiddleware, async (req, res) => {
 
@@ -236,7 +264,18 @@ app.post("/api/login/data", JsonMiddleware, async (req, res) => {
 
 })
 
-//RETURN USER IF AUTHENTICATED AND STORED IN COOKIES
+// LOGOUT POST REQ
+
+app.post("/api/logout", JsonMiddleware, (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/', })
+    res.send({message: "Cookie Deleted, User loged out"})
+})
+
+//RETURN USER IF AUTHENTICATED AND STORE IN COOKIES
 
 app.get("/api/account/data", JsonMiddleware, CookieAuth, async (req, res) => {
     if (req.user) {

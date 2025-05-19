@@ -8,17 +8,23 @@ function BlogsPage(){
     const[blogs, setBlogs] = useState([]);
     const[id, setId] = useState('');
 
-    useEffect(() => {
-        const getBlogs = async () => {
+    const getBlogs = async () => {
 
-            await fetch("http://localhost:5000/api/blogs/data")
-            .then(response => response.json())
-            .then(json => {
-                setBlogs(json)
-            })
-            .catch(err => console.log(err));
-        }
+        await fetch("http://localhost:5000/api/blogs/data")
+        .then(response => response.json())
+        .then(json => {
+            setBlogs(json)
+        })
+        .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+        
         getBlogs();
+
+        const intervalGet = setInterval(getBlogs, 5000);
+
+        return () => clearInterval(intervalGet);
     }, [])
 
     const LikeCountUpdate = (e) => {
@@ -29,14 +35,15 @@ function BlogsPage(){
         if(id != ''){
             fetch(`http://localhost:5000/api/${id}/like/`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
+                body: JSON.stringify({}),
             }).then(response => response.json())
             .then(res => console.log(res))
             .catch(err => console.log(err));
-        }    
+        }
     }
 
     return <>
@@ -70,7 +77,7 @@ function BlogsPage(){
                                 <div className='addings'>
                                     <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
                                     <div className='likes'>
-                                        <img src="../public/like-inactive.svg" alt="like symbol" id={blog._id} onClick={LikeCountUpdate}/>
+                                        <img src={blog.likedByCurrUser ? "../public/like-active.svg" : "../public/like-inactive.svg"} alt="like symbol" id={blog._id} onClick={LikeCountUpdate}/>
                                         <p>{blog.likes}</p>
                                     </div>
                                 </div>
