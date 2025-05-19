@@ -13,7 +13,7 @@ const jwt = require("jsonwebtoken");
 
 const Account = require("./models/accounts");
 const Blogs = require("./models/blog.js");
-const { title } = require("process");
+const UserLikedBlogs = require("./models/userLikedBlogs.js")
 const CookieAuth = require("./public/JWT/CookieJwtAuth").CookieAuth;
 
 const app = express();
@@ -85,6 +85,7 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
             body: item.body, 
             author: authorName, 
             image: `data:${item.image.contentType};base64,${base64}`,
+            likes: item.likes,
             createdAt: item.createdAt
         }
     }))
@@ -92,6 +93,21 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
 }).catch(err => console.log(err))
 
 })
+
+app.post("/api/:id/like/", async (req, res) => {
+
+    const blogObj = await Blogs.findById(req.params.id)
+    .then(result => {return result})
+    .catch(err => console.log(err));
+
+    console.log(blogObj.likes)
+
+    res.send({"message": "Like Count Updated"})
+    // get current like count from id using req.params.id to find blog in fb
+
+    //update it using findByIdAndUpdate()
+
+} )
 
 // app.get("/api/blog/image/:id", JsonMiddleware, async (req, res) => {
 
@@ -117,7 +133,8 @@ app.post("/api/blogs/create", upload.single("image"), CookieAuth, (req, res) => 
         image: {
             data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
             contentType: 'image/png'
-        }
+        },
+        likes: 0,
     };
 
     Blogs.create(newBlogObj)

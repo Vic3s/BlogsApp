@@ -49,8 +49,8 @@ function DetailsPage (){
                     <div className="popularity-data">
                         <p className='date'>{String (blog.blog_date).substring(0, 10)}</p>
                         <div className='likes'>
-                            <img src="../public/like-hand-symbol-of-rounded-shape-variant-svgrepo-com.svg" alt="like symbol"/>
-                            <p>{blog.likes}</p>
+                            <img src="../public/like-inactive.svg" alt="like symbol"/>
+                            <p>{blog.blog_likes}</p>
                         </div>
                     </div>
                 </div>

@@ -24,6 +24,10 @@ const blogSchema = new Schema({
     {
         data: Buffer,
         contentType: String
+    },
+    likes: {
+        type: Number,
+        require: true
     }
 
 }, { timestamps: true });

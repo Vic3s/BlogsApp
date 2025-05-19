@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Footer from './partials/Footer'
 import Nav from './partials/Nav'
 import "./styles/blogs_page.css"
@@ -6,6 +6,7 @@ import "./styles/blogs_page.css"
 function BlogsPage(){
 
     const[blogs, setBlogs] = useState([]);
+    const[id, setId] = useState('');
 
     useEffect(() => {
         const getBlogs = async () => {
@@ -13,7 +14,6 @@ function BlogsPage(){
             await fetch("http://localhost:5000/api/blogs/data")
             .then(response => response.json())
             .then(json => {
-                console.log(json)
                 setBlogs(json)
             })
             .catch(err => console.log(err));
@@ -21,6 +21,23 @@ function BlogsPage(){
         getBlogs();
     }, [])
 
+    const LikeCountUpdate = (e) => {
+        e.preventDefault();
+
+        setId(e.target.id)
+
+        if(id != ''){
+            fetch(`http://localhost:5000/api/${id}/like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+            }).then(response => response.json())
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        }    
+    }
 
     return <>
         <Nav/>
@@ -39,25 +56,25 @@ function BlogsPage(){
                 {blogs.map((blog)=> {
                     return <>
                         <div className='blog-content'>
-                            <a className="single-blog" key={blog._id} href={`/blogs/${blog._id}`}>
-                                <div className='blog-text'>
-                                    <div>
+                            <div className='blog-text'>
+                                <a className="single-blog" key={blog._id} href={`/blogs/${blog._id}`}>
+                                    <div className='text'>
                                         <p>Posted by: {blog.author}</p>
                                         <h3 className="title">{blog.title}</h3>
                                         <p className="snippit">{blog.snippet}</p>
                                     </div>
-                                    <div className='addings'>
-                                        <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
-                                        <div className='likes'>
-                                            <img src="../public/like-hand-symbol-of-rounded-shape-variant-svgrepo-com.svg" alt="like symbol"/>
-                                            <p>{blog.likes}</p>
-                                        </div>
+                                    <div className='image-blog'>
+                                        <img src={blog.image} alt="Blog Image"/>
+                                    </div>
+                                </a>
+                                <div className='addings'>
+                                    <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
+                                    <div className='likes'>
+                                        <img src="../public/like-inactive.svg" alt="like symbol" id={blog._id} onClick={LikeCountUpdate}/>
+                                        <p>{blog.likes}</p>
                                     </div>
                                 </div>
-                                <div className='image-blog'>
-                                    <img src={blog.image} alt="Blog Image"/>
-                                </div>
-                            </a>
+                            </div>
                         </div>
                         <hr color="#222" width="500px" size="4px" className="line"/>
                     </>
