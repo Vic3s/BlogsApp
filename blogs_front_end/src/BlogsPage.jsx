@@ -10,7 +10,13 @@ function BlogsPage(){
 
     const getBlogs = async () => {
 
-        await fetch("http://localhost:5000/api/blogs/data")
+        await fetch("http://localhost:5000/api/blogs/data",{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
         .then(response => response.json())
         .then(json => {
             setBlogs(json)

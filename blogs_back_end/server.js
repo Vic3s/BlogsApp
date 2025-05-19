@@ -28,7 +28,6 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
 const JsonMiddleware = express.json();
 
 
@@ -60,7 +59,7 @@ let upload_profPics = multer({storage: storage_profPics});
 
 // BLOGS ROUTES
 
-app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
+app.get("/api/blogs/data", JsonMiddleware, CookieAuth, (req, res) => {
 
     Blogs.find().sort({ createdAt: -1 })
     .then(async (response) => {
@@ -73,7 +72,7 @@ app.get("/api/blogs/data", JsonMiddleware, (req, res) => {
             if(author_){    
                 authorName = author_.name;
             }
-            const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: author_._id})
+            const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
 
             likedByCurrUser = likedByCurrUser_ !== null ? true : false;
         }catch(err){
@@ -104,7 +103,7 @@ app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
 
     if(req.user){
 
-        const hasUserLiked = await UserLikedBlogs.findOne({blog_id: req.params.id})
+        const hasUserLiked = await UserLikedBlogs.findOne({blog_id: req.params.id, user_id: req.user._id})
         .then(result => {return result})
         .catch(err => console.log(err));
 
