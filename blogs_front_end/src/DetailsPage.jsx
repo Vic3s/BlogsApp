@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react"
+import { use, useEffect, useState} from "react"
 import { useParams } from "react-router-dom";
 import "./styles/details_page.css"
 import Nav from "./partials/Nav";
@@ -26,6 +26,10 @@ function DetailsPage (){
         }
         get_blog_id_data();
     }, [])
+
+    useEffect(() => {
+        console.log(blog)
+    })
 
     return <>
 
@@ -62,6 +66,16 @@ function DetailsPage (){
             
             <div className="content-container">
                 <p className="content">{blog.blog_body}</p>
+            </div>
+
+            <div className="topics-details-container">
+                {blog.blog_topics?.map((topic) => {
+                    return <>
+                        <div className="topic-element">
+                            <p className="text-topic">{topic}</p>
+                        </div>
+                    </>
+                })}
             </div>
 
         </div>

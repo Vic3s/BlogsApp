@@ -14,11 +14,6 @@
     }
 }
 
-button{
-    @include button-basic();
-}
-
-
 .main-container-accoutn{
     width: 1100px;
     height: 500px;
@@ -85,6 +80,9 @@ button{
                 justify-content: center;
                 border: rgb(171, 171, 171) solid 2px;
                 border-radius: 15px;
+                button{
+                    @include button-basic();
+                }
             }
 
             .change-picture-form{

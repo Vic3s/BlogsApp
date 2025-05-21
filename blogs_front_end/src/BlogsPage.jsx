@@ -6,7 +6,11 @@ import "./styles/blogs_page.css"
 function BlogsPage(){
 
     const[blogs, setBlogs] = useState([]);
+    const[mainContnetTopics, setMainContnetTopics] = useState([]);    
     const[id, setId] = useState('');
+    const topicsList = useRef(null);
+    const arrowsInterval = useRef(null);
+
 
     const getBlogs = async () => {
 
@@ -18,8 +22,23 @@ function BlogsPage(){
             credentials: 'include',
         })
         .then(response => response.json())
-        .then(json => {
-            setBlogs(json)
+        .then(data => {
+            setBlogs(data)
+        })
+        .catch(err => console.log(err));
+    }
+
+    const getTopics = async () => {
+        await fetch("http://localhost:5000/api/topics/general",{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            setMainContnetTopics(data)
         })
         .catch(err => console.log(err));
     }
@@ -27,6 +46,7 @@ function BlogsPage(){
     useEffect(() => {
         
         getBlogs();
+        getTopics();
 
         const intervalGet = setInterval(getBlogs, 5000);
 
@@ -34,26 +54,87 @@ function BlogsPage(){
     }, [])
 
     const LikeCountUpdate = (e) => {
-        e.preventDefault();
-
         setId(e.target.id)
 
-        if(id != ''){
-            fetch(`http://localhost:5000/api/${id}/like/`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({}),
-            }).then(response => response.json())
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
+        e.preventDefault();
+
+        fetch(`http://localhost:5000/api/${id}/like/`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({}),
+        }).then(response => response.json())
+        .then(message => console.log(message))
+        .catch(err => console.log(err));
+    }
+
+    const clearArrowsInterval = () => {
+        clearInterval(arrowsInterval.current);
+        arrowsInterval.current = null;
+    }
+
+    const ArrowMoveLeft = () => {
+        let currTransform = Number(getComputedStyle(topicsList.current)
+        .getPropertyValue("transform")
+        .substring(6)
+        .split(", ")[4]);
+
+        if(currTransform >= 0){
+            return;
+        }else{
+            arrowsInterval.current = setInterval(() => {
+                if(currTransform >= 0){
+                    clearArrowsInterval();
+                }
+                topicsList.current.style.transform = `translateX(${currTransform+=5}px)`;
+            }, 10)
+        }
+    }
+
+    const ArrowMoveRight = () => {
+        let currTransform = Number(getComputedStyle(topicsList.current)
+        .getPropertyValue("transform")
+        .substring(6)
+        .split(", ")[4]);
+
+        if(currTransform <= -1385){
+            return;
+        }else{
+            arrowsInterval.current = setInterval(() => {
+                if(currTransform <= -1385){
+                    clearArrowsInterval();
+                }
+                topicsList.current.style.transform = `translateX(${currTransform-=5}px)`;
+            }, 10)
         }
     }
 
     return <>
         <Nav/>
+        <div className='topics-bar-container'>
+            <div className='arrow-left'>
+                <button className='left' onMouseDown={ArrowMoveLeft} onMouseUp={clearArrowsInterval}>
+                    <img src="../public/arrow-left.svg" alt="arrow-left-symbol"/>
+                </button>
+            </div>
+            <div className='topics-container'>
+                <div className='topics-list' ref={topicsList}>
+                    {
+                        mainContnetTopics.map((topicGeneral) => {
+                            return <a href='#' className='topic-general'>{topicGeneral}</a>
+                        })
+                    }
+                </div>
+            </div>
+           
+            <div className='arrow-right'>
+                <button className='right' onMouseDown={ArrowMoveRight} onMouseUp={clearArrowsInterval}>
+                    <img src="../public/arrow-right.svg" alt="arrow-right-symbol"/>
+                </button>
+            </div>
+        </div>
         <div className="blogs-page">
             <div className='heading-content'>
                 <div className='heading-text'>
@@ -80,6 +161,16 @@ function BlogsPage(){
                                         <img src={blog.image} alt="Blog Image"/>
                                     </div>
                                 </a>
+                                <div className="topics">
+                                    {
+                                        blog.topics.map((topicBlog) => {
+                                            return<>
+                                                <a className='topic'>{topicBlog}</a>
+                                            </>
+                                        })
+
+                                    }
+                                </div>
                                 <div className='addings'>
                                     <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
                                     <div className='likes'>

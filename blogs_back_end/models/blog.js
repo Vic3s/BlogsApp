@@ -28,6 +28,10 @@ const blogSchema = new Schema({
     likes: {
         type: Number,
         require: true
+    },
+    topics:{
+        type: Array,
+        require: true
     }
 
 }, { timestamps: true });

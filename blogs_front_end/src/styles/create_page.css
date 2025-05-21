@@ -1,3 +1,17 @@
+button {
+  background: crimson;
+  color: white;
+  padding: 6px;
+  border: 0;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 5px;
+}
+button:hover {
+  background-color: #ef4c6d;
+  transition: all ease-in-out 0.2s;
+}
+
 .create-blog form {
   width: 1250px;
   margin: 0 auto;
@@ -21,20 +35,26 @@
 }
 .create-blog form .input-body textarea {
   width: 100%;
-  height: 300px;
+  height: 500px;
   padding: 8px;
   outline: none;
 }
-.create-blog form .input-main-image {
+.create-blog form .last-additions {
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.create-blog form .last-additions .input-main-image {
   display: flex;
   flex-direction: column;
 }
-.create-blog form .input-main-image input {
+.create-blog form .last-additions .input-main-image input {
   visibility: hidden;
 }
-.create-blog form .input-main-image label {
-  width: 400px;
+.create-blog form .last-additions .input-main-image label {
+  width: 610px;
   height: 250px;
   display: flex;
   flex-direction: column;
@@ -44,19 +64,72 @@
   border: 2px solid crimson;
   border-radius: 15px;
 }
-.create-blog form .input-main-image label img {
+.create-blog form .last-additions .input-main-image label img {
   width: 100px;
   height: 100px;
 }
-.create-blog form .input-main-image label h2 {
+.create-blog form .last-additions .input-main-image label h2 {
   font-size: 27px;
 }
-.create-blog form .submit-btn-container button {
-  background: crimson;
+.create-blog form .last-additions .topics-cohice-contianer {
+  width: 625px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .label-topic-choice h2 {
+  font-size: bolder;
+  color: crimson;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .topics-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .topics-input input {
+  width: 505px;
+  height: 41px;
+  outline: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .topics-input button {
+  width: 105px;
+  height: 41px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .blog-topics {
+  height: 120px;
+  border: solid gray 2px;
+  border-radius: 5px;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .blog-topics .topic-element {
+  background-color: crimson;
+  border-radius: 30px;
+  display: inline-block;
+  padding: 5px 12px;
+  margin-left: 5px;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .blog-topics .topic-element .text-topic {
   color: white;
-  padding: 6px;
-  font-size: 1.2em;
-  cursor: pointer;
+  font-size: 20px;
+  margin-right: 5px;
+  display: inline-block;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .blog-topics .topic-element .remove-topic {
+  display: inline-block;
+}
+.create-blog form .last-additions .topics-cohice-contianer .topics-choice .blog-topics .topic-element .remove-topic img {
+  width: 15px;
+  height: 15px;
+}
+.create-blog form .submit-btn-container button {
   margin-top: 10px;
 }
 .create-blog label {

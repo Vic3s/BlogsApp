@@ -11,7 +11,6 @@
         gap: 20px;
 
         .title-container{
-            // height: 80px;
 
             .title{
                 font-size: 40px;
@@ -73,24 +72,36 @@
                 }
             }
         }
-
         .image-container{
             display: flex;
             justify-content: center;
 
             img{
                 width: 60%;
-            }
-            
+            }   
         }
-
     }
     .content-container{
         margin-bottom: 40px;
         .content{
             font-size: 25px;
             margin-left: 0px;
-            
         }
-    }    
+    }
+    .topics-details-container{
+        .topic-element{
+            background-color: crimson;
+            border-radius: 30px;
+            display: inline-block;
+            padding: 5px 12px;
+            margin-left: 5px;
+            
+            .text-topic{
+                color: white;
+                font-size: 20px;
+                margin-right: 5px;
+                display: inline-block;
+            }
+        }
+    }
 }

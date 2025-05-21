@@ -76,5 +76,18 @@
   font-size: 25px;
   margin-left: 0px;
 }
+.blog-container-details .topics-details-container .topic-element {
+  background-color: crimson;
+  border-radius: 30px;
+  display: inline-block;
+  padding: 5px 12px;
+  margin-left: 5px;
+}
+.blog-container-details .topics-details-container .topic-element .text-topic {
+  color: white;
+  font-size: 20px;
+  margin-right: 5px;
+  display: inline-block;
+}
 
 /*# sourceMappingURL=details_page.css.map */
