@@ -28,7 +28,7 @@ function Login() {
             }
             return response.json();
         }).then(data => {
-            console.log('Response: ', data)
+            console.log( data)
             navigate("/");
         })
         .catch((err) => console.log(err));
