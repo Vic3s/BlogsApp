@@ -4,7 +4,10 @@ const Account = require("../models/accounts.js");
 const Blogs = require("../models/blog.js");
 const UserLikedBlogs = require("../models/userLikedBlogs.js")
 
+const path = require("path");
+const fs = require("fs");
 
+const topicRoutes = require("./topics-routes.js")
 
 const getBlogs = (req, res) => {
 
@@ -81,21 +84,64 @@ const getBlogDetails = async (req, res) => {
 
 }
 
+const blogsFilterdByTopic = async (req, res) => {
+    let topicsList = topicRoutes.getSingleTopicList(req.params.topic);
+
+    console.log(topicsList)
+    
+    Blogs.find({topics: {$in: topicsList}}).sort({ createdAt: -1 })
+    .then(async (response) => {
+        let blogsObj = await Promise.all(response.map(async (item) => {
+            let authorName = "Unknown(Error)"
+            let likedByCurrUser = false;
+            try{
+                const author_ = await Account.findOne({_id: item.author})
+
+                if(author_){    
+                    authorName = author_.name;
+                }
+                // const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+
+                // likedByCurrUser = likedByCurrUser_ !== null ? true : false;
+            }catch(err){
+                console.log("Error with fetching the author: ", err)
+            }
+            
+            const buffer = Buffer.from(item.image.data); 
+            const base64 = buffer.toString('base64');
+            
+            return {
+                _id: item._id, 
+                title: item.title, 
+                snippet: item.snippet, 
+                body: item.body, 
+                author: authorName, 
+                image: `data:${item.image.contentType};base64,${base64}`,
+                likes: item.likes,
+                likedByCurrUser: false,
+                topics: item.topics,
+                createdAt: item.createdAt
+            }
+        }))
+    console.log(blogsObj)
+    res.send(blogsObj)
+    }).catch(err => console.log(err))
+}
+
 const createBlog = (req, res) => {
 
-    console.log(req.body)
-
+    const root_dir = __dirname.slice(0, __dirname.length - 7)
     const newBlogObj = {
         title: req.body.title, 
         snippet: req.body.snippet,
         body: req.body.body, 
         author: req.user._id,
         image: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+            data: fs.readFileSync(path.join(root_dir + '/uploads/' + req.file.filename)),
             contentType: 'image/png'
         },
         likes: 0,
-        topics: req.body.topics,
+        topics: req.body.topics.split("-"),
     };
 
     Blogs.create(newBlogObj)
@@ -110,4 +156,4 @@ const createBlog = (req, res) => {
     })
 }
 
-module.exports = { getBlogs, getBlogDetails, createBlog}
+module.exports = { getBlogs, getBlogDetails, blogsFilterdByTopic, createBlog}

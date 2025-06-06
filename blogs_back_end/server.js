@@ -72,13 +72,15 @@ let upload_profPics = multer({storage: storage_profPics});
 
 // BLOGS ROUTES
 
-app.get("/api/blogs/data", JsonMiddleware, CookieAuth, blogRoutes.getBlogs)
+app.get("/api/blogs/data", JsonMiddleware, CookieAuth, blogRoutes.getBlogs);
 
-//GET BLOG DETAILES VIEW PAGE
+app.get("/api/blogs/:id", JsonMiddleware, CookieAuth, blogRoutes.getBlogDetails);
 
-app.get("/api/blogs/:id", JsonMiddleware, blogRoutes.getBlogDetails)
+app.get("/api/blogs/topics/:topic", JsonMiddleware, blogRoutes.blogsFilterdByTopic);
 
-//LIKE SYSTEM FUNCTIONALITY
+app.post("/api/blogs/create", upload.single("image"), CookieAuth, blogRoutes.createBlog);
+
+// LIKE BLOG FUNCTIONALITY
 
 app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
 
@@ -124,33 +126,30 @@ app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
     }
 });
 
-// CREATE A BLOG POST FUNCTION
-
-app.post("/api/blogs/create", upload.single("image"), blogRoutes.createBlog)
 
 //TOPICS GET FUNCTIONS
 
-app.get("/api/topics/general", topicsRoutes.getGeneralTopicsList)
+app.get("/api/topics/general", topicsRoutes.getGeneralTopicsList);
 
-app.get("/api/topics/full-list", topicsRoutes.getSubtopicsFullList)
+app.get("/api/topics/full-list", topicsRoutes.getSubtopicsFullList);
 
 // SIGNUP PAGE POST
 
-app.post("/api/signup/data", JsonMiddleware, accountRelatedRoutes.signup)
+app.post("/api/signup/data", JsonMiddleware, accountRelatedRoutes.signup);
 
 // LOGIN PAGE POST
 
-app.post("/api/login/data", JsonMiddleware, accountRelatedRoutes.login)
+app.post("/api/login/data", JsonMiddleware, accountRelatedRoutes.login);
 
 // LOGOUT POST REQ
 
-app.post("/api/logout", JsonMiddleware, accountRelatedRoutes.logout)
+app.post("/api/logout", JsonMiddleware, accountRelatedRoutes.logout);
 
 //RETURN USER IF AUTHENTICATED AND STORE IN COOKIES
 
-app.get("/api/account/data", JsonMiddleware, CookieAuth, accountRelatedRoutes.getAccoutDataIfLogged)
+app.get("/api/account/data", JsonMiddleware, CookieAuth, accountRelatedRoutes.getAccoutDataIfLogged);
 
-app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, accountRelatedRoutes.updateAccountImage)
+app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, accountRelatedRoutes.updateAccountImage);
 
 
 //DATABASE CONNECTION FUNC

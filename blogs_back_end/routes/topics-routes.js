@@ -16,4 +16,12 @@ const getSubtopicsFullList = (req, res) => {
     res.send(fullList)
 }
 
-module.exports = { getGeneralTopicsList, getSubtopicsFullList}
+const getSingleTopicList = (topic) => {
+    for(let i=0; i<Object.keys(topics).length; i++){
+        if(Object.keys(topics)[i] == topic){
+            return Object.values(topics)[i];
+        }
+    }
+}
+
+module.exports = { getGeneralTopicsList, getSubtopicsFullList, getSingleTopicList}

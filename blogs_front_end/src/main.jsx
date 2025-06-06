@@ -9,7 +9,7 @@ import Signup from "./Signup.jsx"
 import DetailsPage from './DetailsPage.jsx'
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
 
-const router = createBrowserRouter([{path: "/", element: <BlogsPage/>}, 
+const router = createBrowserRouter([{path: "/", element: <BlogsPage/>},  {path: "/:topic", element: <BlogsPage/>},
   {path: "/create", element: <CreatePage/>}, {path: "/account", element: <AccountPage/>},
 {path: "/login", element: <Login/>}, {path: "/signup", element: <Signup/>}, 
 {path: "/blogs/:id", element: <DetailsPage/>}])

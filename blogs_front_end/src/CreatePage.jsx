@@ -34,7 +34,7 @@ function Create(){
         dataObjMultipart.append('title', title)
         dataObjMultipart.append('snippet', snippet)
         dataObjMultipart.append('body', body)
-        dataObjMultipart.append('topics', topics)
+        dataObjMultipart.append('topics', topics.join("-"))
 
         fetch("http://localhost:5000/api/blogs/create", {
             method: "POST",
@@ -46,7 +46,6 @@ function Create(){
             }
             return response.json();
         }).then(data => {
-            console.log('Response: ', data)
             navigate("/")
         })
         .catch((err) => console.log(err));
@@ -86,6 +85,7 @@ function Create(){
                 
         if(topics.length < 5){
             setTopics(prev => [...prev, inputValue]);
+            console.log(topics)
             return;
         }
     }
@@ -94,7 +94,7 @@ function Create(){
 
         let currTopic = e.currentTarget.dataset.topic
 
-        setTopics(prev => prev.filter((topic) => {topic == currTopic}))
+        setTopics(prev => prev.filter((topic) => topic != currTopic))
         return;
     } 
 
