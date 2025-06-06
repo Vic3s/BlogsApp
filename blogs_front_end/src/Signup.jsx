@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import Nav from "./partials/Nav";
 import "./styles/signup_page.css"
@@ -9,7 +9,14 @@ function Signup() {
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
 
+    const errorRef = useRef(null);
+
     const navigate = useNavigate();
+
+    const errorUserExists = (backendMessage) => {
+        errorRef.current.className = "user-exist-error";
+        errorRef.current.textContent = Object.values(backendMessage)[0];
+    }
 
     const postUserInput = (e) => {
         e.preventDefault();
@@ -27,8 +34,11 @@ function Signup() {
             }
             return response.json();
         }).then(data => {
-            console.log('Response: ', data);
-            navigate("/login");
+            if(Object.keys(data).includes('error')){
+                errorUserExists(data);
+            }else{
+                navigate("/login");
+            }
         })
         .catch((err) => console.log(err));
     }
@@ -60,7 +70,7 @@ function Signup() {
                         <label htmlFor="password">Password</label>
                         <input type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)}/>
                     </div>
-                    
+                    <p ref={errorRef}></p>
                     <button type="submit" >Sign Up</button>
                 </form>
                 <p className="login-redirect">Already have an account?

@@ -1,4 +1,5 @@
 .main-container-login {
+  margin-top: 20px;
   height: 550px;
   display: flex;
   flex-direction: row;
@@ -25,10 +26,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
 }
 .main-container-login .login-form-container .signup-redirect {
-  margin-top: 10px;
   text-align: center;
 }
 .main-container-login .login-form-container .signup-redirect .link-signup a {
@@ -36,6 +35,9 @@
 }
 .main-container-login .login-form-container .signup-redirect .link-signup a:hover {
   color: #9d0322;
+}
+.main-container-login .login-form-container .forgot-password-container {
+  margin-top: 40px;
 }
 .main-container-login .login-form-container .forgot-password-container a {
   color: #dc143c;
@@ -49,6 +51,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.main-container-login .login-form-container form .incorrect-user-error {
+  background-color: rgb(255, 196, 196);
+  color: red;
+  border-radius: 5px;
+  font-size: 20px;
+  width: 82%;
+  text-align: center;
 }
 .main-container-login .login-form-container form .login-inputs {
   width: 100%;

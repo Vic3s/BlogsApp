@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+//Middleware
+
 const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -10,13 +12,24 @@ const morgan = require("morgan");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const JsonMiddleware = express.json();
+
+//MODELS
 
 const Account = require("./models/accounts");
 const Blogs = require("./models/blog.js");
-const UserLikedBlogs = require("./models/userLikedBlogs.js")
+const UserLikedBlogs = require("./models/userLikedBlogs.js");
 const CookieAuth = require("./public/JWT/CookieJwtAuth").CookieAuth;
 
-const topics = require("./public/json/topics.json")
+//Additional files
+const topics = require("./public/json/topics.json");
+
+// Routes imports
+
+const blogRoutes = require("./routes/blog-routes.js");
+const accountRelatedRoutes = require("./routes/account-related-routes.js");
+const topicsRoutes = require("./routes/topics-routes.js");
+const dbRoutes = require("./routes/db-routes.js"); 
 
 const app = express();
 
@@ -29,8 +42,6 @@ app.use(morgan("dev"));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-const JsonMiddleware = express.json();
 
 
 // MULTER SETUP FOR BLOGS
@@ -61,83 +72,15 @@ let upload_profPics = multer({storage: storage_profPics});
 
 // BLOGS ROUTES
 
-app.get("/api/blogs/data", JsonMiddleware, CookieAuth, (req, res) => {
+app.get("/api/blogs/data", JsonMiddleware, CookieAuth, blogRoutes.getBlogs);
 
-    Blogs.find().sort({ createdAt: -1 })
-    .then(async (response) => {
-        let blogsObj = await Promise.all(response.map(async (item) => {
-            let authorName = "Unknown(Error)"
-            let likedByCurrUser = false;
-            try{
-                const author_ = await Account.findOne({_id: item.author})
+app.get("/api/blogs/:id", JsonMiddleware, CookieAuth, blogRoutes.getBlogDetails);
 
-                if(author_){    
-                    authorName = author_.name;
-                }
-                const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+app.get("/api/blogs/topics/:topic", JsonMiddleware, blogRoutes.blogsFilterdByTopic);
 
-                likedByCurrUser = likedByCurrUser_ !== null ? true : false;
-            }catch(err){
-                console.log("Error with fetching the author: ", err)
-            }
-            
-            const buffer = Buffer.from(item.image.data); 
-            const base64 = buffer.toString('base64');
-            
-            return {
-                _id: item._id, 
-                title: item.title, 
-                snippet: item.snippet, 
-                body: item.body, 
-                author: authorName, 
-                image: `data:${item.image.contentType};base64,${base64}`,
-                likes: item.likes,
-                likedByCurrUser: likedByCurrUser,
-                topics: item.topics,
-                createdAt: item.createdAt
-            }
-        }))
-    res.send(blogsObj)
-    }).catch(err => console.log(err))
-})
+app.post("/api/blogs/create", upload.single("image"), CookieAuth, blogRoutes.createBlog);
 
-//GET BLOG DETAILES VIEW PAGE
-
-app.get("/api/blogs/:id", JsonMiddleware, async (req, res) => {
-
-    const id = req.params.id;
-    
-    const blog = await Blogs.findOne({_id: id})
-    .then(async result => {return result})
-    .catch((err) => { res.status(404).json({error: "* Blog Doesnt exist! *"})});
-
-    const author = await Account.findOne({_id: blog.author})
-    .then(result => {return result})
-    .catch(err => console.log(err))
-    
-    const authorBuffer = Buffer.from(author.profilePic.data);
-    const authorBase64 = authorBuffer.toString('base64');
-
-    const buffer = Buffer.from(blog.image.data); 
-    const base64 = buffer.toString('base64');
-
-    let blogObj = {
-        blog_id: blog._id,
-        blog_title: blog.title,
-        blog_snippet: blog.snippet,
-        blog_body: blog.body,
-        blog_author_name: author.name,
-        blog_author_profilepic: `data:${author.profilePic.contentType};base64,${authorBase64}`,
-        blog_image: `data:${blog.image.contentType};base64,${base64}`,
-        blog_likes: blog.likes,
-        blog_topics: blog.topics,
-        blog_date: blog.createdAt
-    }
-    res.send(blogObj)
-
-})
-
-//LIKE SYSTEM FUNCTIONALITY
+// LIKE BLOG FUNCTIONALITY
 
 app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
 
@@ -183,162 +126,32 @@ app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
     }
 });
 
-// CREATE A BLOG POST FUNCTION
-
-app.post("/api/blogs/create", upload.single("image"), CookieAuth, (req, res) => {
-
-    console.log(req.body)
-
-    const newBlogObj = {
-        title: req.body.title, 
-        snippet: req.body.snippet,
-        body: req.body.body, 
-        author: req.user._id,
-        image: {
-            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-            contentType: 'image/png'
-        },
-        likes: 0,
-        topics: req.body.topics,
-    };
-
-    Blogs.create(newBlogObj)
-    .then((err, blog) => {
-        if(err){
-            console.log(err)
-        }else{
-            blog.save()
-            .then((result) => res.status(201).json({ message: 'Blog created' }))
-            .catch((err) => console.log(err));
-        }  
-    })
-})
 
 //TOPICS GET FUNCTIONS
 
-app.get("/api/topics/general", (req, res) => {
+app.get("/api/topics/general", topicsRoutes.getGeneralTopicsList);
 
-    res.send(Object.keys(topics))
-    
-})
-
-app.get("/api/topics/full-list", (req, res) => {
-    let fullList = [];
-
-
-    for(let i in Object.keys(topics)){
-        fullList = fullList.concat(topics[Object.keys(topics)[i]]);
-    }
-
-    res.send(fullList)
-})
+app.get("/api/topics/full-list", topicsRoutes.getSubtopicsFullList);
 
 // SIGNUP PAGE POST
 
-app.post("/api/signup/data", JsonMiddleware, async (req, res) => {
-    const hashed_pass = await bcrypt.hash(req.body.password, 10);
-    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: {
-        data: null,
-        contentType: "image/png"
-    }});
-
-    new_account.save()
-    .then(result => {
-        res.send({message: "The account has been created!"})
-    }).catch(err => console.log(err))
-})
+app.post("/api/signup/data", JsonMiddleware, accountRelatedRoutes.signup);
 
 // LOGIN PAGE POST
 
-app.post("/api/login/data", JsonMiddleware, async (req, res) => {
-
-    const {email, password} = req.body;
-
-    const user = await Account.findOne({email: email})
-    .then(result => {return result})
-    .catch(err => console.log(err));
-
-    const userObj = {
-        _id: user._id,
-        name: user.name,
-        email: user.email
-    }
-
-    if(!await bcrypt.compare(password, user.password)){
-        return res.status(403).json({error: '* Invalid Credentials! *'});
-    }
-
-    const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "30m"})
-
-    res.cookie("token", token, {
-        httpOnly: true
-    });
-
-    res.send({message: "Login Successful!"});
-
-})
+app.post("/api/login/data", JsonMiddleware, accountRelatedRoutes.login);
 
 // LOGOUT POST REQ
 
-app.post("/api/logout", JsonMiddleware, (req, res) => {
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        path: '/', })
-    res.send({message: "Cookie Deleted, User loged out"})
-})
+app.post("/api/logout", JsonMiddleware, accountRelatedRoutes.logout);
 
 //RETURN USER IF AUTHENTICATED AND STORE IN COOKIES
 
-app.get("/api/account/data", JsonMiddleware, CookieAuth, async (req, res) => {
-    if (req.user) {
+app.get("/api/account/data", JsonMiddleware, CookieAuth, accountRelatedRoutes.getAccoutDataIfLogged);
 
-        const getPicture = await Account.findById(req.user._id)
-        .then(result => { return result })
-        .catch(err => console.log(err))
-
-        let base64 = null;        
-
-        if(getPicture.profilePic.data !== null){
-            const buffer = Buffer.from(getPicture.profilePic.data);
-            base64 = buffer.toString('base64');
-        }
-
-        let userObject = {
-            id: req.user._id, 
-            name: req.user.name,
-            email: req.user.email, 
-            pfp_pic: getPicture.profilePic.data ? `data:${getPicture.profilePic.contentType};base64,${base64}` : null,
-        };
-
-        return res.send({ user: userObject});
-    } else {
-        return res.status(401).send({ message: '* Not authenticated! *' });
-    }
-});
-
-app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, (req, res) => {
-
-    Account.findByIdAndUpdate(req.body.author_id, {
-        profilePic: {
-            data: fs.readFileSync(path.join(__dirname + '/prof_pics/' + req.file.filename)),
-            contentType: 'image/png'
-        }
-    }, {new: true})
-    .then(response => console.log(response))
-    .catch(err => console.log({"Error": err}));
-    
-    res.send({"Response": "Posted"})
-
-});
+app.post("/api/account/image", upload_profPics.single("image"), CookieAuth, accountRelatedRoutes.updateAccountImage);
 
 
 //DATABASE CONNECTION FUNC
 
-mongoose.connect(process.env.DB_STRING)
-    .then((result) => { 
-        app.listen(process.env.PORT);
-        
-    })
-    .catch((err) => { console.log("There was an error", err)});
+dbRoutes.connectionDB(app);

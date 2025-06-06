@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 import Footer from './partials/Footer'
 import Nav from './partials/Nav'
 import "./styles/blogs_page.css"
@@ -8,8 +9,13 @@ function BlogsPage(){
     const[blogs, setBlogs] = useState([]);
     const[mainContnetTopics, setMainContnetTopics] = useState([]);    
     const[id, setId] = useState('');
+
     const topicsList = useRef(null);
     const arrowsInterval = useRef(null);
+
+    const { topic }  = useParams();
+
+    const location = useLocation();
 
 
     const getBlogs = async () => {
@@ -43,14 +49,29 @@ function BlogsPage(){
         .catch(err => console.log(err));
     }
 
+    const getBlogsFilterdByTopic = async () => {
+
+        fetch(`http://localhost:5000/api/blogs/topics/${topic}`,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response =>  response.json())
+        .then(data => {
+            setBlogs(data)
+        })
+        .catch(err => console.log(err));
+    }
+
     useEffect(() => {
-        
-        getBlogs();
+        if(location.pathname == "/"){
+            getBlogs();
+        }else{
+            console.log(topic)
+            getBlogsFilterdByTopic();
+        }
         getTopics();
-
-        const intervalGet = setInterval(getBlogs, 5000);
-
-        return () => clearInterval(intervalGet);
     }, [])
 
     const LikeCountUpdate = (e) => {
@@ -123,7 +144,7 @@ function BlogsPage(){
                 <div className='topics-list' ref={topicsList}>
                     {
                         mainContnetTopics.map((topicGeneral) => {
-                            return <a href='#' className='topic-general'>{topicGeneral}</a>
+                            return <a href={`/${topicGeneral}`} className='topic-general'>{topicGeneral}</a>
                         })
                     }
                 </div>
@@ -168,7 +189,6 @@ function BlogsPage(){
                                                 <a className='topic'>{topicBlog}</a>
                                             </>
                                         })
-
                                     }
                                 </div>
                                 <div className='addings'>
