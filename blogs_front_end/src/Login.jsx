@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Nav from "./partials/Nav"
 import "./styles/login_page.css"
@@ -8,7 +8,14 @@ function Login() {
     const[email, setEmail] = useState("")
     const[password, setPassword] = useState("")
 
+    const errorRef = useRef(null);
+
     const navigate = useNavigate();
+
+    const errorIncorrectUserInfo = (backendMessage) => {
+        errorRef.current.className = "incorrect-user-error";
+        errorRef.current.textContent = Object.values(backendMessage)[0];
+    }
 
     function postUserInput(e) {
         e.preventDefault();
@@ -28,8 +35,11 @@ function Login() {
             }
             return response.json();
         }).then(data => {
-            console.log( data)
-            navigate("/");
+            if(Object.keys(data).includes("error")){
+                errorIncorrectUserInfo(data);
+            }else{
+                navigate("/");
+            }
         })
         .catch((err) => console.log(err));
 
@@ -63,10 +73,10 @@ function Login() {
                             <input type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} />
                         </div>
                     </div>
+                    <p ref={errorRef}></p>
                     <p className="forgot-password-container">
                         <Link to="/signup">Forgot password?</Link>
                     </p>
-
                     <button type="submit">Log In</button>
                 </form>
 

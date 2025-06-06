@@ -1,4 +1,5 @@
 .main-container-login{
+    margin-top: 20px;
     height: 550px;
     display: flex;
     flex-direction: row;
@@ -27,10 +28,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        // gap: 20px;
 
         .signup-redirect {
-            margin-top: 10px;
             text-align: center;
       
             .link-signup{
@@ -44,6 +44,7 @@
           }
 
         .forgot-password-container{
+          margin-top: 40px;
             a{
                 color: #dc143c;
                 &:hover {
@@ -58,6 +59,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            .incorrect-user-error{
+              background-color: rgb(255, 196, 196);
+              color: red;
+              border-radius: 5px;
+              font-size: 20px;
+              width: 82%;
+              text-align: center;
+            };
 
             .login-inputs{
                 width: 100%;

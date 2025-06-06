@@ -8,15 +8,26 @@ const jwt = require("jsonwebtoken");
 
 const signup = async (req, res) => {
     const hashed_pass = await bcrypt.hash(req.body.password, 10);
-    const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: {
-        data: null,
-        contentType: "image/png"
-    }});
 
-    new_account.save()
-    .then(result => {
-        res.send({message: "The account has been created!"})
-    }).catch(err => console.log(err))
+    const checkAccount = await Account.findOne({email: req.body.email})
+    .then(result => {return result})
+    .catch(err => console.log(err));
+
+    if(checkAccount !== null){
+        res.send({error: "This accoutn already exists..."})
+
+    }else{
+
+        const new_account = new Account({email: req.body.email, name: req.body.name, password: hashed_pass, profilePic: {
+            data: null,
+            contentType: "image/png"
+        }});
+
+        new_account.save()
+        .then(result => {
+            res.send({message: "The account has been created!"})
+        }).catch(err => console.log(err))
+    }   
 }
 
 
@@ -29,28 +40,26 @@ const login = async (req, res) => {
     .catch(err => console.log(err));
 
     if(user === null){
-        res.send({Error: "Incorrect username or email..."})
-        return;
+        res.send({error: "Incorrect username or email..."})
+    }else{
+        const userObj = {
+            _id: user._id,
+            name: user.name,
+            email: user.email
+        }
+
+        if(!await bcrypt.compare(password, user.password)){
+            return res.status(403).json({error: '* Invalid Credentials! *'});
+        }
+
+        const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "30m"})
+
+        res.cookie("token", token, {
+            httpOnly: true
+        });
+
+        res.send({message: "Login Successful!"});
     }
-
-    const userObj = {
-        _id: user._id,
-        name: user.name,
-        email: user.email
-    }
-
-    if(!await bcrypt.compare(password, user.password)){
-        return res.status(403).json({error: '* Invalid Credentials! *'});
-    }
-
-    const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "30m"})
-
-    res.cookie("token", token, {
-        httpOnly: true
-    });
-
-    res.send({message: "Login Successful!"});
-
 }
 
 const logout = (req, res) => {
