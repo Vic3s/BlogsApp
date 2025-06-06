@@ -1,1 +1,1 @@
-To start the app run the backend i.e. the server.js file and them run the fornt end(npm run dev) 
+To start the application run the backend i.e.(script: npm run) and then run the forntend(script: npm start).
