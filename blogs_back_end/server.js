@@ -74,6 +74,8 @@ let upload_profPics = multer({storage: storage_profPics});
 
 app.get("/api/blogs/data", JsonMiddleware, CookieAuth, blogRoutes.getBlogs);
 
+app.get("/api/search", JsonMiddleware, CookieAuth, blogRoutes.getBlogsLimit);
+
 app.get("/api/blogs/:id", JsonMiddleware, CookieAuth, blogRoutes.getBlogDetails);
 
 app.get("/api/blogs/topics/:topic", JsonMiddleware, blogRoutes.blogsFilterdByTopic);
