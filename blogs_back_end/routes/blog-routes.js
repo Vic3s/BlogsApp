@@ -49,6 +49,50 @@ const getBlogs = (req, res) => {
     }).catch(err => console.log(err))
 }
 
+const getBlogsLimit = (req, res) => {
+
+    const searchQuery = req.query.query;
+
+    console.log(searchQuery);
+
+    Blogs.find({title: { $regex: searchQuery, $options: 'i'} }).limit(10).sort({ createdAt: -1 })
+    .then(async (response) => {
+        let blogsObj = await Promise.all(response.map(async (item) => {
+            let authorName = "Unknown(Error)"
+            let likedByCurrUser = false;
+            try{
+                const author_ = await Account.findOne({_id: item.author})
+
+                if(author_){    
+                    authorName = author_.name;
+                }
+                const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+
+                likedByCurrUser = likedByCurrUser_ !== null ? true : false;
+            }catch(err){
+                console.log("Error with fetching the author: ", err)
+            }
+            
+            const buffer = Buffer.from(item.image.data); 
+            const base64 = buffer.toString('base64');
+            
+            return {
+                _id: item._id, 
+                title: item.title, 
+                snippet: item.snippet, 
+                body: item.body, 
+                author: authorName, 
+                image: `data:${item.image.contentType};base64,${base64}`,
+                likes: item.likes,
+                likedByCurrUser: likedByCurrUser,
+                topics: item.topics,
+                createdAt: item.createdAt
+            }
+        }))
+    res.send(blogsObj)
+    }).catch(err => console.log(err))
+}
+
 
 const getBlogDetails = async (req, res) => {
 
@@ -156,4 +200,4 @@ const createBlog = (req, res) => {
     })
 }
 
-module.exports = { getBlogs, getBlogDetails, blogsFilterdByTopic, createBlog}
+module.exports = { getBlogs, getBlogsLimit, getBlogDetails, blogsFilterdByTopic, createBlog}

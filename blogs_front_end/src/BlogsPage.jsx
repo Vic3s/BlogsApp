@@ -136,7 +136,7 @@ function BlogsPage(){
         <Nav/>
         <div className='topics-bar-container'>
             <div className='arrow-left'>
-                <button className='left' onMouseDown={ArrowMoveLeft} onMouseUp={clearArrowsInterval}>
+                <button className='left' onMouseDown={ArrowMoveLeft} onMouseUp={clearArrowsInterval} onMouseLeave={clearArrowsInterval}>
                     <img src="../public/arrow-left.svg" alt="arrow-left-symbol"/>
                 </button>
             </div>
@@ -151,7 +151,7 @@ function BlogsPage(){
             </div>
            
             <div className='arrow-right'>
-                <button className='right' onMouseDown={ArrowMoveRight} onMouseUp={clearArrowsInterval}>
+                <button className='right' onMouseDown={ArrowMoveRight} onMouseUp={clearArrowsInterval} onMouseLeave={clearArrowsInterval}>
                     <img src="../public/arrow-right.svg" alt="arrow-right-symbol"/>
                 </button>
             </div>
