@@ -85,7 +85,7 @@ function Nav() {
                     <img src="../public/search-icon.svg" alt="search-icon" />
                     <div className="search-bar">
                         <form>
-                            <input onBlur={deActivateSeachMenu} 
+                            <input onBlur={() => setTimeout(() => deActivateSeachMenu(), 100)} 
                             onChange={(e) => {
                                     setSearchQuery(e.target.value);
                                     activateSeachMenu();
@@ -99,7 +99,7 @@ function Nav() {
                     <ul>
                         {blogsResult.map((blog) => {
                             return<>
-                                <a href="#" className="search-item">
+                                <a href={`/blogs/${blog._id}`} className="search-item">
                                     <div className="img-container">
                                         <img src={blog.image} alt="blog-image-search-item"/>
                                     </div>
