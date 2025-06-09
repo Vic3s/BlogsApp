@@ -10,8 +10,7 @@ function DetailsPage (){
 
     const [blog, setBlog] = useState({blog: null});
 
-    useEffect(() => {
-        const get_blog_id_data = async () => {
+    const getBlogById = async () => {
             await fetch(`http://localhost:5000/api/blogs/${id}`, {
                 method: "GET",
                 headers: {
@@ -24,12 +23,39 @@ function DetailsPage (){
             })
             .catch(err => console.log(err));
         }
-        get_blog_id_data();
-    }, [])
 
     useEffect(() => {
-        console.log(blog)
-    })
+        getBlogById();
+    }, [])
+
+    const LikeCountUpdate = (e) => {
+
+        fetch(`http://localhost:5000/api/${e.currentTarget.id}/like/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        }).then(response => response.json())
+        .then(message => console.log(message))
+        .catch(err => console.log(err));
+
+        getBlogById();
+    }
+
+    const UpdateFrontEnd = (e, isLiked) => {
+        const children = e.currentTarget.children;
+
+        if(children.length > 0){
+            if(isLiked){
+                children[0].src = "/like-inactive.svg";
+                children[1].textContent = Number(children[1].textContent) - 1;
+            }else{
+                children[0].src = "/like-active.svg";
+                children[1].textContent = Number(children[1].textContent) + 1;
+            }
+        }
+    }
 
     return <>
 
@@ -52,7 +78,7 @@ function DetailsPage (){
                     </div>
                     <div className="popularity-data">
                         <p className='date'>{String (blog.blog_date).substring(0, 10)}</p>
-                        <div className='likes'>
+                        <div className='likes' id={blog.blog_id} onClick={(e) => { LikeCountUpdate(e), UpdateFrontEnd(e, blog.likedByCurrUser)} }>
                             <img src="../public/like-inactive.svg" alt="like symbol"/>
                             <p>{blog.blog_likes}</p>
                         </div>

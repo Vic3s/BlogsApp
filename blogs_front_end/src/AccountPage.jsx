@@ -18,35 +18,35 @@ function Account(){
     }
 
     const getAcc = async () => {
-            await fetch("http://localhost:5000/api/account/data", {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            })
-            .then(response => response.json())
-            .then(accObj => {
-                setAcc(accObj.user)
-                getAuthorBlogs(accObj.user.id);
-            })
-            .catch(err => console.log(err));
-        }
+        await fetch("http://localhost:5000/api/account/data", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(accObj => {
+            setAcc(accObj.user)
+            getAuthorBlogs(accObj.user.id);
+        })
+        .catch(err => console.log(err));
+    }
 
-        const getAuthorBlogs = async (id) => {
-            await fetch(`http://localhost:5000/api/${id}/blogs`, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            })
-            .then(response => response.json())
-            .then(data => {
-                setBlogs(data)
-            })
-            .catch(err => console.log(err));
-        }
+    const getAuthorBlogs = async (id) => {
+        await fetch(`http://localhost:5000/api/${id}/blogs`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(data => {
+            setBlogs(data)
+        })
+        .catch(err => console.log(err));
+    }
 
     useEffect(()=> {
         getAcc();
@@ -98,6 +98,35 @@ function Account(){
             console.log(data)
         }).catch(err => console.log(err))
     }
+
+    const LikeCountUpdate = (e) => {
+
+        fetch(`http://localhost:5000/api/${e.currentTarget.id}/like/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        }).then(response => response.json())
+        .then(message => console.log(message))
+        .catch(err => console.log(err));
+
+        getAuthorBlogs(acc.id);
+    }
+
+    const UpdateFrontEnd = (e, isLiked) => {
+        const children = e.currentTarget.children;
+
+        if(children.length > 0){
+            if(isLiked){
+                children[0].src = "/like-inactive.svg";
+                children[1].textContent = Number(children[1].textContent) - 1;
+            }else{
+                children[0].src = "/like-active.svg";
+                children[1].textContent = Number(children[1].textContent) + 1;
+            }
+        }
+    } 
     
     return  <div className="main-container-accoutn">
                 <Nav/>

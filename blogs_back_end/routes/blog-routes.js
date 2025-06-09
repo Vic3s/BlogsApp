@@ -22,16 +22,16 @@ const getBlogs = (req, res) => {
                 if(author_){    
                     authorName = author_.name;
                 }
-                const likedByCurrUser_ = await UserLikedBlogs.findOne({user_id: req.user._id})
+                const UserLikedBlogsObject = await UserLikedBlogs.findOne({user_id: req.user._id})
 
-                likedByCurrUser = likedByCurrUser_.blogs_liked.includes(item._id) ? true : false;
+                likedByCurrUser = UserLikedBlogsObject.blogs_liked.includes(item._id) ? true : false;
             }catch(err){
                 console.log("Error with fetching the author: ", err)
             }
             
             const buffer = Buffer.from(item.image.data); 
             const base64 = buffer.toString('base64');
-            
+
             return {
                 _id: item._id, 
                 title: item.title, 
@@ -53,8 +53,6 @@ const getBlogsLimit = (req, res) => {
 
     const searchQuery = req.query.query;
 
-    console.log(searchQuery);
-
     Blogs.find({title: { $regex: searchQuery, $options: 'i'} }).limit(10).sort({ createdAt: -1 })
     .then(async (response) => {
         let blogsObj = await Promise.all(response.map(async (item) => {
@@ -66,9 +64,9 @@ const getBlogsLimit = (req, res) => {
                 if(author_){    
                     authorName = author_.name;
                 }
-                const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+                const UserLikedBlogsObject = await UserLikedBlogs.findOne({user_id: req.user._id})
 
-                likedByCurrUser = likedByCurrUser_ !== null ? true : false;
+                likedByCurrUser = UserLikedBlogsObject.blogs_liked.includes(item._id) ? true : false;
             }catch(err){
                 console.log("Error with fetching the author: ", err)
             }
@@ -109,16 +107,16 @@ const getAuthorBlogs = (req, res) => {
                 if(author_){    
                     authorName = author_.name;
                 }
-                const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+                const UserLikedBlogsObject = await UserLikedBlogs.findOne({user_id: req.user._id})
 
-                likedByCurrUser = likedByCurrUser_ !== null ? true : false;
+                likedByCurrUser = UserLikedBlogsObject.blogs_liked.includes(item._id) ? true : false;
             }catch(err){
                 console.log("Error with fetching the author: ", err)
             }
             
             const buffer = Buffer.from(item.image.data); 
             const base64 = buffer.toString('base64');
-            
+
             return {
                 _id: item._id, 
                 title: item.title, 
@@ -155,6 +153,10 @@ const getBlogDetails = async (req, res) => {
     const buffer = Buffer.from(blog.image.data); 
     const base64 = buffer.toString('base64');
 
+    const UserLikedBlogsObject = await UserLikedBlogs.findOne({user_id: req.user._id})
+
+    const likedByCurrUser = UserLikedBlogsObject.blogs_liked.includes(blog._id) ? true : false;
+
     let blogObj = {
         blog_id: blog._id,
         blog_title: blog.title,
@@ -164,6 +166,7 @@ const getBlogDetails = async (req, res) => {
         blog_author_profilepic: `data:${author.profilePic.contentType};base64,${authorBase64}`,
         blog_image: `data:${blog.image.contentType};base64,${base64}`,
         blog_likes: blog.likes,
+        likedByCurrUser: likedByCurrUser,
         blog_topics: blog.topics,
         blog_date: blog.createdAt
     }
@@ -174,8 +177,6 @@ const getBlogDetails = async (req, res) => {
 const blogsFilterdByTopic = async (req, res) => {
     let topicsList = topicRoutes.getSingleTopicList(req.params.topic);
 
-    console.log(topicsList)
-    
     Blogs.find({topics: {$in: topicsList}}).sort({ createdAt: -1 })
     .then(async (response) => {
         let blogsObj = await Promise.all(response.map(async (item) => {
@@ -187,9 +188,9 @@ const blogsFilterdByTopic = async (req, res) => {
                 if(author_){    
                     authorName = author_.name;
                 }
-                // const likedByCurrUser_ = await UserLikedBlogs.findOne({blog_id: item._id, user_id: req.user._id})
+                const UserLikedBlogsObject = await UserLikedBlogs.findOne({user_id: req.user._id})
 
-                // likedByCurrUser = likedByCurrUser_ !== null ? true : false;
+                likedByCurrUser = UserLikedBlogsObject.blogs_liked.includes(item._id) ? true : false;
             }catch(err){
                 console.log("Error with fetching the author: ", err)
             }
@@ -205,12 +206,11 @@ const blogsFilterdByTopic = async (req, res) => {
                 author: authorName, 
                 image: `data:${item.image.contentType};base64,${base64}`,
                 likes: item.likes,
-                likedByCurrUser: false,
+                likedByCurrUser: likedByCurrUser,
                 topics: item.topics,
                 createdAt: item.createdAt
             }
         }))
-    console.log(blogsObj)
     res.send(blogsObj)
     }).catch(err => console.log(err))
 }

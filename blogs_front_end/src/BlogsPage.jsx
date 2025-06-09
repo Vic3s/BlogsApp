@@ -7,8 +7,7 @@ import "./styles/blogs_page.css"
 function BlogsPage(){
 
     const[blogs, setBlogs] = useState([]);
-    const[mainContnetTopics, setMainContnetTopics] = useState([]);    
-    const[id, setId] = useState('');
+    const[mainContnetTopics, setMainContnetTopics] = useState([]);
     const[liked, setLiked] = useState(false);
 
     const topicsList = useRef(null);
@@ -69,7 +68,6 @@ function BlogsPage(){
             if(location.pathname == "/"){
                 getBlogs();
             }else{
-                console.log(topic)
                 getBlogsFilterdByTopic();
             }
             getTopics();
@@ -94,12 +92,12 @@ function BlogsPage(){
         }).then(response => response.json())
         .then(message => console.log(message))
         .catch(err => console.log(err));
+
+        getBlogs();
     }
 
     const UpdateFrontEnd = (e, isLiked) => {
         const children = e.currentTarget.children;
-
-        console.log(isLiked);
 
         if(children.length > 0){
             if(isLiked){
