@@ -7,16 +7,17 @@ function Account(){
 
     const[acc, setAcc] = useState({user: null})
     const[isActive, setIsActive] = useState(false);
-    const navigate = useNavigate();
     const[image, setImage] = useState(null);
+    const[blogs, setBlogs] = useState([]);
+    const navigate = useNavigate();
+
     const dataObjMultipart = new FormData();
 
     function handleImage(e) {
         setImage(e.target.files[0])
     }
 
-    useEffect(()=> {
-        const getAcc = async () => {
+    const getAcc = async () => {
             await fetch("http://localhost:5000/api/account/data", {
                 method: "GET",
                 headers: {
@@ -26,10 +27,30 @@ function Account(){
             })
             .then(response => response.json())
             .then(accObj => {
-                setAcc(accObj.user)})
+                setAcc(accObj.user)
+                getAuthorBlogs(accObj.user.id);
+            })
             .catch(err => console.log(err));
         }
+
+        const getAuthorBlogs = async (id) => {
+            await fetch(`http://localhost:5000/api/${id}/blogs`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            })
+            .then(response => response.json())
+            .then(data => {
+                setBlogs(data)
+            })
+            .catch(err => console.log(err));
+        }
+
+    useEffect(()=> {
         getAcc();
+        
     }, [])
 
     useEffect(() => {
@@ -107,6 +128,45 @@ function Account(){
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="blogs-body">
+                    {blogs.map((blog)=> {
+                        return <>
+                            <div className='blog-content'>
+                                <div className='blog-text'>
+                                    <a className="single-blog" key={blog._id} href={`/blogs/${blog._id}`}>
+                                        <div className='text'>
+                                            <p>Posted by: {blog.author}</p>
+                                            <h3 className="title">{blog.title}</h3>
+                                            <p className="snippit">{blog.snippet}</p>
+                                        </div>
+                                        <div className='image-blog'>
+                                            <img src={blog.image} alt="Blog Image"/>
+                                        </div>
+                                    </a>
+                                    <div className="topics">
+                                        {
+                                            blog.topics.map((topicBlog) => {
+                                                return<>
+                                                    <a className='topic'>{topicBlog}</a>
+                                                </>
+                                            })
+                                        }
+                                    </div>
+                                    <div className='addings'>
+                                        <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
+                                        <div className='likes' onClick={(e) => {LikeCountUpdate(e), UpdateFrontEnd(e, blog.likedByCurrUser)}} id={blog._id}>
+                                            <img src={blog.likedByCurrUser ? "/like-active.svg" : "/like-inactive.svg"}
+                                            alt="like symbol"/> 
+                                            <p>{blog.likes}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr color="#222" width="500px" size="4px" className="line"/>
+                        </>
+                        })
+                    }
                 </div>
         </div>
 }

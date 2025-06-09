@@ -34,15 +34,14 @@ function Nav() {
         const delayDebounce = setTimeout(() => {
             if(searchQuery){
                 fetch(`http://localhost:5000/api/search?query=${searchQuery}`,{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
                 })
                 .then(response => response.json() )
                 .then(data => {
-                    console.log(data);
                     setBlogsResult(data);
                 })
                 .catch(err => console.log(err)); 

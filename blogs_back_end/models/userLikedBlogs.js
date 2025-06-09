@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 
 const userLikedSchema = new Schema({
 
-    blog_id: {
-        type: String, 
+    blogs_liked: {
+        type: Array, 
         require: true
     },
     user_id: {

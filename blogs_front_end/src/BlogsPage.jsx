@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, use } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import Footer from './partials/Footer'
 import Nav from './partials/Nav'
@@ -9,6 +9,7 @@ function BlogsPage(){
     const[blogs, setBlogs] = useState([]);
     const[mainContnetTopics, setMainContnetTopics] = useState([]);    
     const[id, setId] = useState('');
+    const[liked, setLiked] = useState(false);
 
     const topicsList = useRef(null);
     const arrowsInterval = useRef(null);
@@ -16,7 +17,6 @@ function BlogsPage(){
     const { topic }  = useParams();
 
     const location = useLocation();
-
 
     const getBlogs = async () => {
 
@@ -29,7 +29,7 @@ function BlogsPage(){
         })
         .then(response => response.json())
         .then(data => {
-            setBlogs(data)
+            setBlogs(data);
         })
         .catch(err => console.log(err));
     }
@@ -65,31 +65,52 @@ function BlogsPage(){
     }
 
     useEffect(() => {
-        if(location.pathname == "/"){
-            getBlogs();
-        }else{
-            console.log(topic)
-            getBlogsFilterdByTopic();
+        const fetchData = () => {
+            if(location.pathname == "/"){
+                getBlogs();
+            }else{
+                console.log(topic)
+                getBlogsFilterdByTopic();
+            }
+            getTopics();
         }
-        getTopics();
-    }, [])
+
+        fetchData();
+        
+        const rerenderInterval = setInterval(fetchData, 8000)
+
+        return () => clearInterval(rerenderInterval)
+        
+    }, [location.pathname, topic])
 
     const LikeCountUpdate = (e) => {
-        setId(e.target.id)
 
-        e.preventDefault();
-
-        fetch(`http://localhost:5000/api/${id}/like/`, {
-            method: 'POST',
-            credentials: 'include',
+        fetch(`http://localhost:5000/api/${e.currentTarget.id}/like/`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({}),
+            credentials: 'include'
         }).then(response => response.json())
         .then(message => console.log(message))
         .catch(err => console.log(err));
     }
+
+    const UpdateFrontEnd = (e, isLiked) => {
+        const children = e.currentTarget.children;
+
+        console.log(isLiked);
+
+        if(children.length > 0){
+            if(isLiked){
+                children[0].src = "/like-inactive.svg";
+                children[1].textContent = Number(children[1].textContent) - 1;
+            }else{
+                children[0].src = "/like-active.svg";
+                children[1].textContent = Number(children[1].textContent) + 1;
+            }
+        }
+    } 
 
     const clearArrowsInterval = () => {
         clearInterval(arrowsInterval.current);
@@ -193,9 +214,10 @@ function BlogsPage(){
                                 </div>
                                 <div className='addings'>
                                     <p className='date'>{String (blog.createdAt).substring(0, 10)}</p>
-                                    <div className='likes'>
-                                        <img src={blog.likedByCurrUser ? "../public/like-active.svg" : "../public/like-inactive.svg"} alt="like symbol" id={blog._id} onClick={LikeCountUpdate}/>
-                                        <p>{blog.likes}</p>
+                                    <div className='likes' onClick={(e) => {LikeCountUpdate(e), UpdateFrontEnd(e, blog.likedByCurrUser)}} id={blog._id}>
+                                        <img src={blog.likedByCurrUser ? "/like-active.svg" : "/like-inactive.svg"}
+                                        alt="like symbol"/> 
+                                         <p>{blog.likes}</p>
                                     </div>
                                 </div>
                             </div>

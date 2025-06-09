@@ -140,9 +140,15 @@ p, h1, h2, h3, a, ul {
   gap: 10px;
 }
 .blogs-page .blogs-body .blog-content .addings .likes {
+  width: 50px;
+  height: 30px;
+  background-color: rgb(236, 236, 236);
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
+  border-radius: 50px;
 }
 .blogs-page .blogs-body .blog-content .addings .likes img {
   width: 20px;
