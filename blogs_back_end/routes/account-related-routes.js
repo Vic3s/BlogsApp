@@ -52,7 +52,7 @@ const login = async (req, res) => {
             return res.status(403).json({error: '* Invalid Credentials! *'});
         }
 
-        const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "30m"})
+        const token = jwt.sign(userObj, process.env.SECRET, {expiresIn: "1h"})
 
         res.cookie("token", token, {
             httpOnly: true

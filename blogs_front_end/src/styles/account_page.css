@@ -108,5 +108,80 @@
   transition: 200ms ease-in-out;
   transform: translate(-50%, -50%) scale(1);
 }
+.main-container-accoutn .blogs-body {
+  margin-top: 40px;
+  width: 1044px;
+}
+.main-container-accoutn .blogs-body .blog-content {
+  width: 1044px;
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 60px;
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .text .snippit {
+  margin-bottom: 20px;
+  color: rgb(127, 127, 127);
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .text .snippit :hover {
+  color: rgb(219, 20, 60);
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .text .title {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .text .title :hover {
+  color: crimson;
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .image-blog {
+  width: 250px;
+  height: 150px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-container-accoutn .blogs-body .blog-content .blog-text .single-blog .image-blog img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.main-container-accoutn .blogs-body .blog-content .topics {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main-container-accoutn .blogs-body .blog-content .topics .topic {
+  color: rgb(156, 156, 156);
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0px 10px 10px 0px;
+}
+.main-container-accoutn .blogs-body .blog-content .addings {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+.main-container-accoutn .blogs-body .blog-content .addings .likes {
+  width: 50px;
+  height: 30px;
+  background-color: rgb(236, 236, 236);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 50px;
+}
+.main-container-accoutn .blogs-body .blog-content .addings .likes img {
+  width: 20px;
+  height: 20px;
+}
+.main-container-accoutn .blogs-body .blog-content .addings .likes img:hover {
+  cursor: pointer;
+}
 
 /*# sourceMappingURL=account_page.css.map */

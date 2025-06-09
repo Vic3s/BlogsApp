@@ -34,15 +34,14 @@ function Nav() {
         const delayDebounce = setTimeout(() => {
             if(searchQuery){
                 fetch(`http://localhost:5000/api/search?query=${searchQuery}`,{
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
                 })
                 .then(response => response.json() )
                 .then(data => {
-                    console.log(data);
                     setBlogsResult(data);
                 })
                 .catch(err => console.log(err)); 
@@ -85,7 +84,7 @@ function Nav() {
                     <img src="../public/search-icon.svg" alt="search-icon" />
                     <div className="search-bar">
                         <form>
-                            <input onBlur={deActivateSeachMenu} 
+                            <input onBlur={() => setTimeout(() => deActivateSeachMenu(), 100)} 
                             onChange={(e) => {
                                     setSearchQuery(e.target.value);
                                     activateSeachMenu();
@@ -99,7 +98,7 @@ function Nav() {
                     <ul>
                         {blogsResult.map((blog) => {
                             return<>
-                                <a href="#" className="search-item">
+                                <a href={`/blogs/${blog._id}`} className="search-item">
                                     <div className="img-container">
                                         <img src={blog.image} alt="blog-image-search-item"/>
                                     </div>

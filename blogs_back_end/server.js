@@ -80,45 +80,66 @@ app.get("/api/blogs/:id", JsonMiddleware, CookieAuth, blogRoutes.getBlogDetails)
 
 app.get("/api/blogs/topics/:topic", JsonMiddleware, blogRoutes.blogsFilterdByTopic);
 
+app.get("/api/:id/blogs", JsonMiddleware, CookieAuth, blogRoutes.getAuthorBlogs);
+
 app.post("/api/blogs/create", upload.single("image"), CookieAuth, blogRoutes.createBlog);
 
 // LIKE BLOG FUNCTIONALITY
 
-app.post("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
+app.get("/api/:id/like/", JsonMiddleware, CookieAuth, async (req, res) => {
 
     if(req.user){
 
-        const hasUserLiked = await UserLikedBlogs.findOne({blog_id: req.params.id, user_id: req.user._id})
+        const hasUserLiked = await UserLikedBlogs.findOne({user_id: req.user._id})
         .then(result => {return result})
         .catch(err => console.log(err));
+        console.log("hasUserLiked: ", hasUserLiked)
 
-        if(hasUserLiked !== null){
-            const blog_likes = await Blogs.findById(req.params.id)
-            .then(result => {return result.likes})
+        if(hasUserLiked !== null && hasUserLiked.blogs_liked.includes(req.params.id)){
+            const blog_obj = await Blogs.findById(req.params.id)
+            .then(result => {return result})
             .catch(err => console.log(err));
 
-            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_likes - 1})
+            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_obj.likes - 1})
             .then(result => {})
             .catch(err => console.log(err));
 
-            await UserLikedBlogs.deleteOne({blog_id: req.params.id})
-            .then(result => {})
+            await UserLikedBlogs.updateOne({user_id: req.user._id}, {$pull: {blogs_liked: blog_obj._id}})
+            .then(result => {console.log("Removed From UserLiked List: ", result)})
+            .catch(err => console.log(err));
+
+
+            UserLikedBlogs.findOne({user_id: req.user._id})
+            .then(result => console.log("User entry Exists:", result))
             .catch(err => console.log(err));
 
         }else{
-            const blog_likes = await Blogs.findById(req.params.id)
-            .then(result => {return result.likes})
+            const blog_obj = await Blogs.findById(req.params.id)
+            .then(result => {return result})
             .catch(err => console.log(err));
 
-            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_likes + 1})
+            await Blogs.findByIdAndUpdate(req.params.id, {likes: blog_obj.likes + 1})
             .then(result => {})
             .catch(err => console.log(err));
 
-            const likedBlog = new UserLikedBlogs({blog_id: req.params.id, user_id: req.user._id})
+            const UserLikedObjectExists = await UserLikedBlogs.findOne({user_id: req.user._id})
+            .then(result => {return result})
+            .catch(err => console.log(err));
 
-            likedBlog.save()
-            .then(result => {})
-            .catch(err => console.log(err))
+            if(UserLikedObjectExists !== null){
+                await UserLikedBlogs.updateOne({user_id: req.user._id}, {$push: {blogs_liked: blog_obj._id}})
+                .then(result => {})
+                .catch(err => console.log(err));
+
+                await UserLikedBlogs.findOne({user_id: req.user._id})
+                .then(result => console.log("User Entry Exists in else statement", result))
+                .catch(err => console.log(err));
+            }else{
+                const likedBlog = new UserLikedBlogs({blogs_liked: blog_obj._id, user_id: req.user._id})
+                likedBlog.save()
+                .then(result => {console.log("Created a new user entry...", result)})
+                .catch(err => console.log(err))
+            }
         }
 
         res.send({"message": "Like Count Updated"})
